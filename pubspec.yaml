@@ -1,0 +1,30 @@
+name: qr_code_attendance
+description: A QR code-based attendance tracking system.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.1.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_dotenv: ^5.1.0
+  flutter_riverpod: ^2.4.9
+  flutter_speed_dial: ^7.0.0
+  intl: ^0.20.2
+  qr_code_scanner_plus: ^2.0.10+1
+  qr_flutter: ^4.1.0
+  shared_preferences: ^2.5.2
+  supabase_flutter: ^2.6.3
+  flex_color_scheme: ^8.2.0
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env

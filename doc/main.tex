@@ -1,0 +1,316 @@
+\documentclass[12pt,a4paper]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+
+% Define colors for code listings
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Configure code listings
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% Document info
+\title{QR Code Attendance System\\Documentation}
+\author{University Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\chapter{Introduction}
+\section{Project Overview}
+This documentation describes a comprehensive QR code-based attendance tracking system implemented using Flutter and Supabase. The system consists of two main components: a teacher interface for managing attendance and generating QR codes, and a student interface for scanning QR codes to mark attendance.
+
+\section{Objectives}
+\begin{itemize}
+    \item Streamline the attendance tracking process
+    \item Reduce manual entry errors
+    \item Provide real-time attendance statistics
+    \item Enable efficient attendance management
+\end{itemize}
+
+\chapter{Technical Specifications}
+\section{Hardware Requirements}
+\begin{itemize}
+    \item Mobile device with camera capability (for QR scanning)
+    \item Internet connectivity
+    \item Minimum device specifications:
+    \begin{itemize}
+        \item Android 6.0 or higher
+        \item iOS 11.0 or higher
+        \item 2GB RAM minimum
+        \item Camera with autofocus
+    \end{itemize}
+\end{itemize}
+
+\section{Software Stack}
+\begin{itemize}
+    \item Frontend: Flutter Framework
+    \item Backend: Supabase
+    \item Database: PostgreSQL
+    \item Authentication: Supabase Auth
+\end{itemize}
+
+\section{Development Tools}
+\begin{itemize}
+    \item IDE: Visual Studio Code
+    \item Version Control: Git
+    \item State Management: Riverpod
+    \item CI/CD: GitHub Actions
+\end{itemize}
+
+\chapter{Application Architecture}
+\section{System Architecture}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [System Architecture Diagram]\\
+            \vspace{1cm}
+            Place system architecture diagram here showing:\\
+            \vspace{0.3cm}
+            - Flutter Client\\
+            - Supabase Backend\\
+            - Database\\
+            - Authentication Flow\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{System Architecture Diagram}
+    \label{fig:system_architecture}
+\end{figure}
+
+\section{Database Schema}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Database Schema Diagram]\\
+            \vspace{1cm}
+            Place database schema diagram here showing:\\
+            \vspace{0.3cm}
+            - User Tables\\
+            - Attendance Tables\\
+            - Course Tables\\
+            - Relationships\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Database Schema}
+    \label{fig:database_schema}
+\end{figure}
+
+\chapter{Interface Documentation}
+\section{Teacher Interface}
+
+\subsection{Login Screen}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Teacher Login Interface]\\
+            \vspace{1cm}
+            Screenshot of teacher login screen showing:\\
+            \vspace{0.3cm}
+            - Login Form\\
+            - Authentication Options\\
+            - Password Reset\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Teacher Login Interface}
+    \label{fig:teacher_login}
+\end{figure}
+
+\subsection{Dashboard}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Teacher Dashboard]\\
+            \vspace{1cm}
+            Screenshot of teacher dashboard showing:\\
+            \vspace{0.3cm}
+            - Course List\\
+            - Attendance Statistics\\
+            - Quick Actions\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Teacher Dashboard}
+    \label{fig:teacher_dashboard}
+\end{figure}
+
+\subsection{QR Code Generation}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [QR Code Generation Interface]\\
+            \vspace{1cm}
+            Screenshot of QR generation screen showing:\\
+            \vspace{0.3cm}
+            - Course Selection\\
+            - QR Code Display\\
+            - Time Settings\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{QR Code Generation Interface}
+    \label{fig:qr_generation}
+\end{figure}
+
+\subsection{Attendance Management}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Attendance Management Interface]\\
+            \vspace{1cm}
+            Screenshot of attendance management showing:\\
+            \vspace{0.3cm}
+            - Student List\\
+            - Attendance Records\\
+            - Export Options\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Attendance Management Interface}
+    \label{fig:attendance_management}
+\end{figure}
+
+\section{Student Interface}
+
+\subsection{Login Screen}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Student Login Interface]\\
+            \vspace{1cm}
+            Screenshot of student login screen showing:\\
+            \vspace{0.3cm}
+            - Login Form\\
+            - Student ID Entry\\
+            - Password Reset\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Student Login Interface}
+    \label{fig:student_login}
+\end{figure}
+
+\subsection{QR Scanner}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [QR Scanner Interface]\\
+            \vspace{1cm}
+            Screenshot of QR scanner showing:\\
+            \vspace{0.3cm}
+            - Camera View\\
+            - Scanning Guidelines\\
+            - Success/Error Messages\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{QR Code Scanner Interface}
+    \label{fig:qr_scanner}
+\end{figure}
+
+\subsection{Attendance History}
+\begin{figure}[H]
+    \centering
+    \framebox{
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            \vspace{0.5cm}
+            [Attendance History View]\\
+            \vspace{1cm}
+            Screenshot of attendance history showing:\\
+            \vspace{0.3cm}
+            - Course List\\
+            - Attendance Dates\\
+            - Statistics\\
+            \vspace{0.5cm}
+        \end{minipage}
+    }
+    \caption{Attendance History View}
+    \label{fig:attendance_history}
+\end{figure}
+
+\chapter{Implementation Details}
+\section{Core Features}
+\begin{itemize}
+    \item User authentication and authorization
+    \item QR code generation and scanning
+    \item Real-time attendance tracking
+    \item Attendance report generation
+    \item Profile management
+\end{itemize}
+
+\section{Implementation Challenges}
+\begin{itemize}
+    \item Handling offline scenarios
+    \item QR code security measures
+    \item Real-time synchronization
+    \item Data consistency across devices
+\end{itemize}
+
+\section{Future Improvements}
+\begin{itemize}
+    \item Batch attendance processing
+    \item Advanced analytics dashboard
+    \item Integration with academic management systems
+    \item Enhanced reporting features with export options
+\end{itemize}
+
+\end{document}
