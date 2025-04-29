@@ -22,11 +22,18 @@ class TeacherSidebarNav extends StatelessWidget {
     return NavigationRail(
       extended: isExpanded,
       minExtendedWidth: 200,
-      leading: IconButton(
-        icon: Icon(
-          isExpanded ? Icons.chevron_left : Icons.chevron_right,
+      elevation: 2,
+      useIndicator: true,
+      minWidth: 72,
+      groupAlignment: -1, // Align items to top
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: IconButton(
+          icon: Icon(
+            isExpanded ? Icons.chevron_left : Icons.chevron_right,
+          ),
+          onPressed: onExpandToggle,
         ),
-        onPressed: onExpandToggle,
       ),
       destinations: const [
         NavigationRailDestination(
@@ -46,28 +53,33 @@ class TeacherSidebarNav extends StatelessWidget {
           label: Text('Profile'),
         ),
       ],
-      trailing: Column(
-        children: [
-          Expanded(child: SizedBox()), // Push settings to bottom
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: onSettingsTap,
-          ),
-          IconButton(
-            icon: Icon(Icons.help),
-            onPressed: () {
-              // TODO: Implement help
-              debugPrint('Help pressed');
-            },
-          ),
-          SizedBox(height: 8),
-        ],
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Spacer(), // Push settings to bottom
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: onSettingsTap,
+            ),
+            const SizedBox(height: 8),
+            IconButton(
+              icon: const Icon(Icons.help),
+              onPressed: () {
+                // TODO: Implement help
+                debugPrint('Help pressed');
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       labelType: isExpanded
           ? NavigationRailLabelType.none
-          : NavigationRailLabelType.selected,
+          : NavigationRailLabelType.all,
     );
   }
 }
