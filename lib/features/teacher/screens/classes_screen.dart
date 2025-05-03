@@ -15,9 +15,16 @@ class ClassesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Classes'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        title: const Text(
+          'My Classes',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -64,7 +71,7 @@ class ClassesScreen extends ConsumerWidget {
                       onRefresh: () =>
                           ref.read(teacherClassesProvider.notifier).refresh(),
                       child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.zero,
                         itemCount: classes.length,
                         itemBuilder: (context, index) {
                           final teacherClass = classes[index];
@@ -88,12 +95,24 @@ class ClassesScreen extends ConsumerWidget {
     final periods = ref.watch(academicPeriodsProvider);
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant,
+            width: 0.5,
+          ),
+        ),
+      ),
       child: Row(
         children: [
-          const Text('Academic Year: '),
-          const SizedBox(width: 16),
+          Text(
+            'Academic Year',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 12),
           DropdownButton<String>(
             value: currentPeriod,
             items: periods.map((year) {
@@ -102,8 +121,9 @@ class ClassesScreen extends ConsumerWidget {
                 child: Text(
                   year,
                   style: TextStyle(
+                    fontSize: 15,
                     fontWeight: year == DateTime.now().year.toString()
-                        ? FontWeight.bold
+                        ? FontWeight.w500
                         : FontWeight.normal,
                   ),
                 ),
@@ -114,6 +134,7 @@ class ClassesScreen extends ConsumerWidget {
                 ref.read(academicPeriodProvider.notifier).state = newPeriod;
               }
             },
+            underline: Container(),
           ),
         ],
       ),
@@ -122,89 +143,53 @@ class ClassesScreen extends ConsumerWidget {
 
   Widget _buildClassCard(BuildContext context, ClassInfo classInfo,
       [WidgetRef? ref]) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+    return Material(
+      color: Colors.transparent,
       child: InkWell(
         onTap: () => _showClassDetails(context, classInfo),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                width: 0.5,
+              ),
+            ),
+          ),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          classInfo.title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
+              Expanded(
+                child: Text(
+                  '${classInfo.code} - ${classInfo.title}',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              if (ref != null) ...[
+                IconButton(
+                  icon: const Icon(Icons.qr_code, size: 20),
+                  onPressed: () {
+                    final teacherClass =
+                        ref.read(teacherClassesProvider).value?.firstWhere(
+                              (tc) => tc.id == classInfo.id,
+                              orElse: () => throw Exception('Class not found'),
+                            );
+                    if (teacherClass != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QRCodeGeneratorScreen(
+                            teacherClass: teacherClass,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Code: ${classInfo.code}',
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.qr_code),
-                    onPressed: () {
-                      if (ref == null) return;
-
-                      final teacherClass = ref
-                          .read(teacherClassesProvider)
-                          .value
-                          ?.firstWhere(
-                            (tc) => tc.id == classInfo.id,
-                            orElse: () => throw Exception('Class not found'),
-                          );
-                      if (teacherClass != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QRCodeGeneratorScreen(
-                              teacherClass: teacherClass,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.schedule, size: 16),
-                  const SizedBox(width: 4),
-                  Text(classInfo.schedule),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.people, size: 16),
-                  const SizedBox(width: 4),
-                  Text('${classInfo.students} students'),
-                ],
-              ),
-              if (classInfo.description.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  classInfo.description,
-                  style: const TextStyle(fontSize: 14),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                      );
+                    }
+                  },
+                  visualDensity: VisualDensity.compact,
                 ),
               ],
             ],
@@ -217,8 +202,25 @@ class ClassesScreen extends ConsumerWidget {
   void _showClassDetails(BuildContext context, ClassInfo classInfo) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ClassDetailScreen(classInfo: classInfo),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ClassDetailScreen(classInfo: classInfo),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.05, 0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              )),
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 200),
       ),
     );
   }

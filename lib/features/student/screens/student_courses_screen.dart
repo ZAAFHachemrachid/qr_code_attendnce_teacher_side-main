@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/student_providers.dart';
+import '../providers/dummy_course_provider.dart';
+import '../widgets/dummy_course_card.dart';
+import '../models/dummy_course.dart';
+import 'course_detail_screen.dart';
 
 class StudentCoursesScreen extends ConsumerWidget {
   const StudentCoursesScreen({super.key});
@@ -8,6 +12,7 @@ class StudentCoursesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final attendanceRecords = ref.watch(filteredAttendanceProvider);
+    final dummyCoursesAsync = ref.watch(dummyCourseProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -18,7 +23,38 @@ class StudentCoursesScreen extends ConsumerWidget {
       courseAttendance.putIfAbsent(courseTitle, () => []).add(record);
     }
 
+    return dummyCoursesAsync.when(
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Scaffold(
+        body: Center(
+          child: Text('Error: $error'),
+        ),
+      ),
+      data: (dummyCourses) => _buildContent(
+        context,
+        ref,
+        theme,
+        isDark,
+        courseAttendance,
+        dummyCourses,
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    bool isDark,
+    Map<String, List<dynamic>> courseAttendance,
+    List<DummyCourse> dummyCourses,
+  ) {
     return Scaffold(
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
         title: const Text('My Courses'),
         actions: [
@@ -28,134 +64,140 @@ class StudentCoursesScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: courseAttendance.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.school_outlined,
-                    size: 64,
-                    color: theme.colorScheme.primary.withOpacity(0.5),
+      body: courseAttendance.isEmpty && dummyCourses.isNotEmpty
+          ? _buildDummyCourseView(context, dummyCourses.first)
+          : courseAttendance.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.school_outlined,
+                        size: 64,
+                        color: theme.colorScheme.primary.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No courses found',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No courses found',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: () => ref.refresh(studentAttendanceProvider.future),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: courseAttendance.length,
-                itemBuilder: (context, index) {
-                  final courseTitle = courseAttendance.keys.elementAt(index);
-                  final records = courseAttendance[courseTitle]!;
-                  final totalSessions = records.length;
-                  final presentSessions =
-                      records.where((r) => r.status == 'present').length;
-                  final attendanceRate = totalSessions > 0
-                      ? (presentSessions / totalSessions * 100)
-                      : 0.0;
+                )
+              : RefreshIndicator(
+                  onRefresh: () =>
+                      ref.refresh(studentAttendanceProvider.future),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: courseAttendance.length,
+                    itemBuilder: (context, index) {
+                      final courseTitle =
+                          courseAttendance.keys.elementAt(index);
+                      final records = courseAttendance[courseTitle]!;
+                      final totalSessions = records.length;
+                      final presentSessions =
+                          records.where((r) => r.status == 'present').length;
+                      final attendanceRate = totalSessions > 0
+                          ? (presentSessions / totalSessions * 100)
+                          : 0.0;
 
-                  return _AnimatedCard(
-                    child: Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: InkWell(
-                        onTap: () =>
-                            _showCourseDetails(context, courseTitle, records),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                theme.colorScheme.primary
-                                    .withOpacity(isDark ? 0.2 : 0.1),
-                                theme.colorScheme.primary
-                                    .withOpacity(isDark ? 0.1 : 0.05),
-                              ],
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                      return _AnimatedCard(
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: InkWell(
+                            onTap: () => _showCourseDetails(
+                                context, ref, courseTitle, records),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    theme.colorScheme.primary
+                                        .withOpacity(isDark ? 0.2 : 0.1),
+                                    theme.colorScheme.primary
+                                        .withOpacity(isDark ? 0.1 : 0.05),
+                                  ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.book,
-                                      color: theme.colorScheme.primary,
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.book,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            courseTitle,
+                                            style: theme.textTheme.titleLarge
+                                                ?.copyWith(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        courseTitle,
-                                        style: theme.textTheme.titleLarge
-                                            ?.copyWith(
-                                          color: theme.colorScheme.onSurface,
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        _buildStat(
+                                          context,
+                                          'Total Sessions',
+                                          totalSessions.toString(),
+                                          theme.colorScheme.primary,
+                                        ),
+                                        _buildStat(
+                                          context,
+                                          'Present',
+                                          presentSessions.toString(),
+                                          theme.colorScheme.secondary,
+                                        ),
+                                        _buildStat(
+                                          context,
+                                          'Attendance',
+                                          '${attendanceRate.toStringAsFixed(1)}%',
+                                          theme.colorScheme.tertiary,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    TweenAnimationBuilder<double>(
+                                      tween: Tween(
+                                          begin: 0, end: attendanceRate / 100),
+                                      duration:
+                                          const Duration(milliseconds: 1500),
+                                      builder: (context, value, _) => ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: LinearProgressIndicator(
+                                          value: value,
+                                          backgroundColor: theme.colorScheme
+                                              .surfaceContainerHighest,
+                                          color: theme.colorScheme.primary,
+                                          minHeight: 8,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    _buildStat(
-                                      context,
-                                      'Total Sessions',
-                                      totalSessions.toString(),
-                                      theme.colorScheme.primary,
-                                    ),
-                                    _buildStat(
-                                      context,
-                                      'Present',
-                                      presentSessions.toString(),
-                                      theme.colorScheme.secondary,
-                                    ),
-                                    _buildStat(
-                                      context,
-                                      'Attendance',
-                                      '${attendanceRate.toStringAsFixed(1)}%',
-                                      theme.colorScheme.tertiary,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(
-                                      begin: 0, end: attendanceRate / 100),
-                                  duration: const Duration(milliseconds: 1500),
-                                  builder: (context, value, _) => ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: LinearProgressIndicator(
-                                      value: value,
-                                      backgroundColor: theme
-                                          .colorScheme.surfaceContainerHighest,
-                                      color: theme.colorScheme.primary,
-                                      minHeight: 8,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+                      );
+                    },
+                  ),
+                ),
     );
   }
 
@@ -186,11 +228,36 @@ class StudentCoursesScreen extends ConsumerWidget {
 
   void _showCourseDetails(
     BuildContext context,
+    WidgetRef ref,
     String courseTitle,
     List<dynamic> records,
   ) {
-    final theme = Theme.of(context);
+    // Check if this is a dummy course
+    final dummyCourses = ref.read(dummyCourseProvider).value;
+    DummyCourse? dummyCourse;
 
+    if (dummyCourses != null) {
+      try {
+        dummyCourse = dummyCourses.firstWhere(
+          (course) => course.title == courseTitle,
+        );
+      } catch (_) {
+        // Not found in dummy courses
+      }
+    }
+
+    if (dummyCourse != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CourseDetailScreen(course: dummyCourse!),
+        ),
+      );
+      return;
+    }
+
+    // Show real course details in bottom sheet
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -325,6 +392,43 @@ class _AnimatedCard extends StatefulWidget {
 
   @override
   State<_AnimatedCard> createState() => _AnimatedCardState();
+}
+
+extension on StudentCoursesScreen {
+  Widget _buildDummyCourseView(BuildContext context, DummyCourse course) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.school_outlined,
+              size: 64,
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Welcome to Your Course Dashboard',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CourseDetailScreen(course: course),
+                ),
+              ),
+              child: DummyCourseCard(course: course),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _AnimatedCardState extends State<_AnimatedCard>
