@@ -25,10 +25,10 @@ class TeacherClass {
         .toList();
     print('[TeacherClass] Total students: ${allStudents.length}');
     print('[TeacherClass] Groups count: ${groups.length}');
-    groups.forEach((group) {
+    for (var group in groups) {
       print(
           '[TeacherClass] Group ${group.name} has ${group.studentCount} students');
-    });
+    }
     return allStudents;
   }
 

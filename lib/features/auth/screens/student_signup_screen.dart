@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/department.dart';
+import '../models/student_group.dart';
 import '../providers/auth_provider.dart';
+import '../providers/department_providers.dart';
 
 class StudentSignupScreen extends ConsumerStatefulWidget {
   const StudentSignupScreen({super.key});
@@ -15,8 +18,6 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _error;
-  List<Map<String, dynamic>>? _groups;
-  String? _selectedGroupId;
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -24,12 +25,6 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _studentNumberController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGroups();
-  }
 
   @override
   void dispose() {
@@ -42,44 +37,10 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
     super.dispose();
   }
 
-  Future<void> _loadGroups() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final response =
-          await Supabase.instance.client.from('student_groups').select('''
-        *,
-        departments:department_id (
-          name,
-          code
-        )
-      ''');
-
-      if (mounted) {
-        setState(() {
-          _groups = List<Map<String, dynamic>>.from(response);
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = 'Failed to load student groups';
-        });
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
   Future<void> _handleSignup() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedGroupId == null) {
+    final selectedGroup = ref.read(selectedGroupProvider);
+    if (selectedGroup == null) {
       setState(() {
         _error = 'Please select a group';
       });
@@ -98,7 +59,7 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
             studentNumber: _studentNumberController.text.trim(),
-            groupId: _selectedGroupId!,
+            groupId: selectedGroup.id,
           );
 
       if (mounted) {
@@ -121,17 +82,73 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
     }
   }
 
-  List<DropdownMenuItem<String>> _buildGroupItems() {
-    if (_groups == null) return [];
-    return _groups!.map((group) {
-      final department = group['departments'] as Map<String, dynamic>;
-      final groupName =
-          '${department['code']} - Year ${group['current_year']} - Section ${group['section']}';
-      return DropdownMenuItem<String>(
-        value: group['id'] as String,
-        child: Text(groupName),
-      );
-    }).toList();
+  Widget _buildDepartmentDropdown() {
+    final departments = ref.watch(departmentsProvider);
+    final selectedDepartment = ref.watch(selectedDepartmentProvider);
+
+    return departments.when(
+      data: (depts) => DropdownButtonFormField<Department>(
+        value: selectedDepartment,
+        decoration: const InputDecoration(
+          labelText: 'Department',
+          border: OutlineInputBorder(),
+        ),
+        items: depts.map((dept) {
+          return DropdownMenuItem<Department>(
+            value: dept,
+            child: Text('${dept.code} - ${dept.name}'),
+          );
+        }).toList(),
+        onChanged: (value) {
+          ref.read(selectedDepartmentProvider.notifier).state = value;
+          // Clear selected group when department changes
+          ref.read(selectedGroupProvider.notifier).state = null;
+        },
+        validator: (value) {
+          if (value == null) {
+            return 'Please select a department';
+          }
+          return null;
+        },
+      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => const Text('Failed to load departments'),
+    );
+  }
+
+  Widget _buildGroupDropdown() {
+    final selectedDepartment = ref.watch(selectedDepartmentProvider);
+    final groups = ref.watch(
+      studentGroupsProvider(selectedDepartment?.id),
+    );
+    final selectedGroup = ref.watch(selectedGroupProvider);
+
+    return groups.when(
+      data: (groupList) => DropdownButtonFormField<StudentGroup>(
+        value: selectedGroup,
+        decoration: const InputDecoration(
+          labelText: 'Student Group',
+          border: OutlineInputBorder(),
+        ),
+        items: groupList.map((group) {
+          return DropdownMenuItem<StudentGroup>(
+            value: group,
+            child: Text(group.displayName),
+          );
+        }).toList(),
+        onChanged: (value) {
+          ref.read(selectedGroupProvider.notifier).state = value;
+        },
+        validator: (value) {
+          if (value == null) {
+            return 'Please select a group';
+          }
+          return null;
+        },
+      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => const Text('Failed to load student groups'),
+    );
   }
 
   @override
@@ -202,25 +219,9 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedGroupId,
-                decoration: const InputDecoration(
-                  labelText: 'Student Group',
-                  border: OutlineInputBorder(),
-                ),
-                items: _buildGroupItems(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedGroupId = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select a group';
-                  }
-                  return null;
-                },
-              ),
+              _buildDepartmentDropdown(),
+              const SizedBox(height: 16),
+              _buildGroupDropdown(),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,

@@ -69,7 +69,7 @@ class ClassesScreen extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           final teacherClass = classes[index];
                           return _buildClassCard(
-                              context, teacherClass.toClassInfo());
+                              context, teacherClass.toClassInfo(), ref);
                         },
                       ),
                     ),
@@ -120,7 +120,8 @@ class ClassesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildClassCard(BuildContext context, ClassInfo classInfo) {
+  Widget _buildClassCard(BuildContext context, ClassInfo classInfo,
+      [WidgetRef? ref]) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: InkWell(
@@ -158,14 +159,25 @@ class ClassesScreen extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.qr_code),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QRCodeGeneratorScreen(
-                            classInfo: classInfo,
+                      if (ref == null) return;
+
+                      final teacherClass = ref
+                          .read(teacherClassesProvider)
+                          .value
+                          ?.firstWhere(
+                            (tc) => tc.id == classInfo.id,
+                            orElse: () => throw Exception('Class not found'),
+                          );
+                      if (teacherClass != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QRCodeGeneratorScreen(
+                              teacherClass: teacherClass,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                 ],
@@ -212,16 +224,16 @@ class ClassesScreen extends ConsumerWidget {
   }
 }
 
-class ClassDetailScreen extends StatefulWidget {
+class ClassDetailScreen extends ConsumerStatefulWidget {
   final ClassInfo classInfo;
 
   const ClassDetailScreen({super.key, required this.classInfo});
 
   @override
-  State<ClassDetailScreen> createState() => _ClassDetailScreenState();
+  ConsumerState<ClassDetailScreen> createState() => _ClassDetailScreenState();
 }
 
-class _ClassDetailScreenState extends State<ClassDetailScreen>
+class _ClassDetailScreenState extends ConsumerState<ClassDetailScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final Map<String, Map<String, bool>> _expandedGroups = {
@@ -281,14 +293,21 @@ class _ClassDetailScreenState extends State<ClassDetailScreen>
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QRCodeGeneratorScreen(
-                          classInfo: widget.classInfo,
+                    final teacherClass =
+                        ref.read(teacherClassesProvider).value?.firstWhere(
+                              (tc) => tc.id == widget.classInfo.id,
+                              orElse: () => throw Exception('Class not found'),
+                            );
+                    if (teacherClass != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QRCodeGeneratorScreen(
+                            teacherClass: teacherClass,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                   icon: const Icon(Icons.qr_code),
                   label: const Text('Generate QR'),

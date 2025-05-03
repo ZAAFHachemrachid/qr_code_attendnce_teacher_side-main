@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/course.dart';
+import 'models/teacher_class.dart';
 import 'providers/teacher_profile_provider.dart';
 import 'screens/teacher_settings_screen.dart';
 import 'screens/attendance_screen.dart';
@@ -87,9 +88,6 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
         ],
       ),
       body: TeacherResponsiveLayout(
-        child: _showSettings
-            ? const TeacherSettingsScreen()
-            : _screens[_selectedIndex],
         currentIndex: _selectedIndex,
         onNavigationTap: (index) {
           _showSettings = false;
@@ -105,6 +103,9 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
             }
           });
         },
+        child: _showSettings
+            ? const TeacherSettingsScreen()
+            : _screens[_selectedIndex],
       ),
     );
   }
@@ -225,7 +226,7 @@ class TeacherDashboard extends ConsumerWidget {
                     Icons.qr_code,
                     Colors.green,
                     () {
-                      const demoClass = ClassInfo(
+                      final demoClass = TeacherClass(
                         id: 'demo',
                         code: 'DEMO101',
                         title: 'Demo Class',
@@ -245,11 +246,12 @@ class TeacherDashboard extends ConsumerWidget {
                         ],
                         schedule: 'Demo Schedule',
                         type: ClassType.course,
+                        academicPeriod: '2024',
                       );
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (_) => const QRCodeGeneratorScreen(
-                                classInfo: demoClass)),
+                            builder: (_) =>
+                                QRCodeGeneratorScreen(teacherClass: demoClass)),
                       );
                     },
                   ),
