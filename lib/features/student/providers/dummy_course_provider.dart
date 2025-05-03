@@ -14,7 +14,7 @@ final dummyCourseProvider =
 class DummyCourseNotifier extends StateNotifier<AsyncValue<List<DummyCourse>>> {
   final Ref _ref;
   final AsyncValue<StudentProfile> _studentProfileAsync;
-  static const int maxDummyCourses = 3;
+  static const int maxDummyCourses = 5;
 
   DummyCourseNotifier(this._ref, this._studentProfileAsync)
       : super(const AsyncValue.loading()) {
@@ -62,26 +62,18 @@ class DummyCourseNotifier extends StateNotifier<AsyncValue<List<DummyCourse>>> {
         // If no real courses, show 3 dummy courses
         return maxDummyCourses;
       } else {
-        // If has real courses, show 2 dummy courses
-        return 2;
+        // If has real courses, show 3 dummy courses
+        return 3;
       }
     } catch (e) {
-      // Default to 2 dummy courses on error
-      return 2;
+      // Default to 3 dummy courses on error
+      return 3;
     }
   }
 
   String _getCurrentSemester() {
-    final now = DateTime.now();
-    // Simple semester determination logic
-    // Can be expanded based on specific academic calendar
-    if (now.month >= 9 && now.month <= 12) {
-      return 'FALL';
-    } else if (now.month >= 1 && now.month <= 5) {
-      return 'SPRING';
-    } else {
-      return 'SUMMER';
-    }
+    // Always return SPRING for Spring 2025 semester
+    return 'SPRING';
   }
 
   void refreshDummyCourses() async {

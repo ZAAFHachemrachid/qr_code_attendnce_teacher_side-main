@@ -13,39 +13,48 @@ class DummyCourse extends ClassInfo {
   static const List<Map<String, dynamic>> _dummyCourseData = [
     {
       'code': 'CS101',
-      'title': 'Introduction to Computer Science',
-      'description': 'Fundamental concepts of programming and computer science',
+      'title': 'Programming 101',
+      'description': 'Introduction to programming concepts and problem solving',
       'credits': 3,
-      'schedule': 'Sun/Tue 09:30-11:00',
+      'schedule': 'Mon/Wed 09:30-11:00',
       'professor': 'Dr. Sarah Thompson',
       'room': 'B201'
     },
     {
       'code': 'MATH201',
-      'title': 'Calculus I',
-      'description': 'Limits, derivatives, and basic integration techniques',
+      'title': 'Mathematics',
+      'description': 'Advanced mathematical concepts and applications',
       'credits': 4,
-      'schedule': 'Mon/Wed 11:00-12:30',
+      'schedule': 'Tue/Thu 11:00-12:30',
       'professor': 'Dr. Michael Chen',
       'room': 'A102'
     },
     {
       'code': 'PHY102',
-      'title': 'Physics for Engineers',
-      'description': 'Mechanics, thermodynamics, and wave motion',
+      'title': 'Physics',
+      'description': 'Fundamental principles of physics and their applications',
       'credits': 4,
-      'schedule': 'Tue/Thu 13:00-14:30',
+      'schedule': 'Mon/Wed 13:00-14:30',
       'professor': 'Dr. James Wilson',
       'room': 'C305'
     },
     {
       'code': 'ENG205',
-      'title': 'Technical Writing',
-      'description': 'Professional communication and documentation skills',
+      'title': 'English Literature',
+      'description': 'Study of classic and contemporary literature',
       'credits': 3,
-      'schedule': 'Wed/Fri 09:00-10:30',
+      'schedule': 'Tue/Thu 09:00-10:30',
       'professor': 'Prof. Emily Martinez',
       'room': 'D401'
+    },
+    {
+      'code': 'CS202',
+      'title': 'Data Structures',
+      'description': 'Advanced data structures and algorithms',
+      'credits': 4,
+      'schedule': 'Wed/Fri 14:00-15:30',
+      'professor': 'Dr. Robert Lee',
+      'room': 'B205'
     }
   ];
 

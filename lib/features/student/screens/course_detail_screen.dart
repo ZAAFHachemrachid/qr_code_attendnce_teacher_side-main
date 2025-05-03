@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/custom_tab_bar.dart';
+import '../../../features/theme/theme_constants.dart';
 import '../models/dummy_course.dart';
 import '../models/session_attendance.dart';
 import '../widgets/attendance_section.dart';
@@ -25,12 +27,10 @@ class CourseDetailScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(course.code),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Overview'),
-              Tab(text: 'Attendance'),
-              Tab(text: 'Sessions'),
-            ],
+          centerTitle: true,
+          bottom: CustomTabBar(
+            tabs: ['Overview', 'Attendance', 'Sessions'],
+            icons: [Icons.info_outline, Icons.bar_chart, Icons.calendar_today],
           ),
         ),
         body: TabBarView(
@@ -46,67 +46,72 @@ class CourseDetailScreen extends StatelessWidget {
 
   Widget _buildOverviewTab(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppTheme.spacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+            child: Container(
+              padding: const EdgeInsets.all(AppTheme.spacing),
+              decoration: BoxDecoration(
+                gradient: AppTheme.gradients.primaryGradient,
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Introduction',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
                     course.title,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     course.description,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                        ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing),
+          Text(
+            'Course Details',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: AppTheme.spacing),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppTheme.spacing),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Course Details',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
                   _buildInfoRow(
                     context,
                     Icons.person,
                     'Professor',
                     (course.groups.first as DummyGroup).professor,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(height: 24),
                   _buildInfoRow(
                     context,
                     Icons.schedule,
                     'Schedule',
                     course.schedule,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(height: 24),
                   _buildInfoRow(
                     context,
                     Icons.meeting_room,
                     'Room',
                     _roomNumber,
                   ),
-                  const SizedBox(height: 12),
+                  const Divider(height: 24),
                   _buildInfoRow(
                     context,
                     Icons.calendar_today,
@@ -124,51 +129,42 @@ class CourseDetailScreen extends StatelessWidget {
 
   Widget _buildAttendanceTab(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppTheme.spacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Attendance Summary',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 24),
-                  AttendanceSection(
-                    title: 'Course Sessions',
-                    sessions: course.courseAttendance,
-                    attendedCount:
-                        course.getAttendanceCount(SessionType.course),
-                    totalSessions: course.getTotalSessions(SessionType.course),
-                    attendancePercentage:
-                        course.getAttendancePercentage(SessionType.course),
-                  ),
-                  const SizedBox(height: 24),
-                  AttendanceSection(
-                    title: 'TD Sessions',
-                    sessions: course.tdAttendance,
-                    attendedCount: course.getAttendanceCount(SessionType.td),
-                    totalSessions: course.getTotalSessions(SessionType.td),
-                    attendancePercentage:
-                        course.getAttendancePercentage(SessionType.td),
-                  ),
-                  const SizedBox(height: 24),
-                  AttendanceSection(
-                    title: 'TP Sessions',
-                    sessions: course.tpAttendance,
-                    attendedCount: course.getAttendanceCount(SessionType.tp),
-                    totalSessions: course.getTotalSessions(SessionType.tp),
-                    attendancePercentage:
-                        course.getAttendancePercentage(SessionType.tp),
-                  ),
-                ],
-              ),
-            ),
+          Text(
+            'Attendance Summary',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: AppTheme.spacing),
+          AttendanceSection(
+            title: 'Course Sessions',
+            sessions: course.courseAttendance,
+            attendedCount: course.getAttendanceCount(SessionType.course),
+            totalSessions: course.getTotalSessions(SessionType.course),
+            attendancePercentage:
+                course.getAttendancePercentage(SessionType.course),
+          ),
+          const SizedBox(height: AppTheme.spacing),
+          AttendanceSection(
+            title: 'TD Sessions',
+            sessions: course.tdAttendance,
+            attendedCount: course.getAttendanceCount(SessionType.td),
+            totalSessions: course.getTotalSessions(SessionType.td),
+            attendancePercentage:
+                course.getAttendancePercentage(SessionType.td),
+          ),
+          const SizedBox(height: AppTheme.spacing),
+          AttendanceSection(
+            title: 'TP Sessions',
+            sessions: course.tpAttendance,
+            attendedCount: course.getAttendanceCount(SessionType.tp),
+            totalSessions: course.getTotalSessions(SessionType.tp),
+            attendancePercentage:
+                course.getAttendancePercentage(SessionType.tp),
           ),
         ],
       ),
@@ -180,12 +176,11 @@ class CourseDetailScreen extends StatelessWidget {
       length: 3,
       child: Column(
         children: [
-          const TabBar(
-            tabs: [
-              Tab(text: 'Course'),
-              Tab(text: 'TD'),
-              Tab(text: 'TP'),
-            ],
+          Container(
+            color: Theme.of(context).colorScheme.surface,
+            child: const CustomTabBar(
+              tabs: ['Course', 'TD', 'TP'],
+            ),
           ),
           Expanded(
             child: TabBarView(
@@ -204,37 +199,60 @@ class CourseDetailScreen extends StatelessWidget {
   Widget _buildSessionList(
       BuildContext context, List<SessionAttendance> sessions) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppTheme.spacing),
       itemCount: sessions.length,
       itemBuilder: (context, index) {
         final session = sessions[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor:
-                  session.isPresent ? Colors.green[100] : Colors.red[100],
-              child: Icon(
-                session.isPresent ? Icons.check : Icons.close,
-                color: session.isPresent ? Colors.green : Colors.red,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+              gradient: LinearGradient(
+                colors: [
+                  session.isPresent
+                      ? AppTheme.colorScheme.secondaryContainer
+                      : AppTheme.colorScheme.errorContainer,
+                  Colors.white,
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
             ),
-            title: Text(session.topic),
-            subtitle: Text(
-              '${session.date.toString().split(' ')[0]} • Room ${session.roomNumber}',
-            ),
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: session.isPresent ? Colors.green[50] : Colors.red[50],
-                borderRadius: BorderRadius.circular(12),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: session.isPresent
+                    ? AppTheme.colorScheme.secondary
+                    : AppTheme.colorScheme.error,
+                child: Icon(
+                  session.isPresent ? Icons.check : Icons.close,
+                  color: Colors.white,
+                ),
               ),
-              child: Text(
-                session.isPresent ? 'Present' : 'Absent',
-                style: TextStyle(
-                  color:
-                      session.isPresent ? Colors.green[700] : Colors.red[700],
-                  fontWeight: FontWeight.bold,
+              title: Text(
+                session.topic,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                '${session.date.toString().split(' ')[0]} • Room ${session.roomNumber}',
+              ),
+              trailing: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: session.isPresent
+                      ? AppTheme.colorScheme.secondaryContainer
+                      : AppTheme.colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  session.isPresent ? 'Present' : 'Absent',
+                  style: TextStyle(
+                    color: session.isPresent
+                        ? AppTheme.colorScheme.secondary
+                        : AppTheme.colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -248,8 +266,19 @@ class CourseDetailScreen extends StatelessWidget {
       BuildContext context, IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: 12),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppTheme.colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            size: 20,
+            color: AppTheme.colorScheme.primary,
+          ),
+        ),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,12 +287,15 @@ class CourseDetailScreen extends StatelessWidget {
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ],
           ),
