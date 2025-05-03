@@ -22,7 +22,15 @@ class StudentGroup {
   });
 
   factory StudentGroup.fromJson(Map<String, dynamic> json) {
-    print('Parsing StudentGroup JSON: $json'); // Debug log
+    print('Parsing StudentGroup JSON: $json'); // Input JSON
+
+    final departmentData = json['departments'] as Map<String, dynamic>?;
+    print('Department data: $departmentData'); // Department nested data
+
+    final department =
+        departmentData != null ? Department.fromJson(departmentData) : null;
+    print('Parsed department: ${department?.toJson()}'); // Parsed department
+
     return StudentGroup(
       id: json['id'] as String,
       departmentId: json['department_id'] as String,
@@ -30,12 +38,7 @@ class StudentGroup {
       currentYear: json['current_year'] as int,
       section: json['section'] as String,
       name: json['name'] as String?,
-      department: json['departments'] != null
-          ? Department.fromJson({
-              'id': json['department_id'], // Use department_id as id
-              ...json['departments'] as Map<String, dynamic>
-            })
-          : null,
+      department: department,
     );
   }
 
