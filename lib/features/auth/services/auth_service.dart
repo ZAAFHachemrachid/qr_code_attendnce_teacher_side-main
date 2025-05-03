@@ -20,6 +20,12 @@ class AuthService {
       final authResponse = await _supabase.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo:
+            kDebugMode ? null : null, // Allows auto-confirm in debug mode
+        data: {
+          'email_confirm_override':
+              kDebugMode, // Custom claim to bypass email verification in debug
+        },
       );
 
       if (authResponse.user == null) {
@@ -74,6 +80,12 @@ class AuthService {
       final authResponse = await _supabase.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo:
+            kDebugMode ? null : null, // Allows auto-confirm in debug mode
+        data: {
+          'email_confirm_override':
+              kDebugMode, // Custom claim to bypass email verification in debug
+        },
       );
 
       if (authResponse.user == null) {

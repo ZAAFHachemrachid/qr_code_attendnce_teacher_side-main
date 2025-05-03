@@ -140,6 +140,17 @@ using (
 );
 ```
 
+## Development Mode Configuration
+
+1. For development environments, you can disable email confirmation by running the SQL script in `db/auth_dev_config.sql`. This will:
+   - Disable email confirmation requirement
+   - Auto-confirm emails for development accounts (ending in @gmail.com)
+   - Create necessary triggers and functions
+
+2. ⚠️ Important: This configuration should only be used in development environments. For production:
+   - Email confirmation should be enabled
+   - Auto-confirmation should be disabled
+   - Remove the development triggers and functions
 ## Authentication Settings
 
 1. Enable Email Authentication:
