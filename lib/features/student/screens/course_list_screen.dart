@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/course_card.dart';
+import '../widgets/dummy_course_card.dart';
 import '../models/dummy_course.dart';
 
 class CourseListScreen extends StatelessWidget {
@@ -45,19 +45,13 @@ class CourseListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Courses'),
+        elevation: 0,
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.1,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
+      body: ListView.builder(
+        padding: EdgeInsets.zero,
         itemCount: courses.length,
         itemBuilder: (context, index) {
-          return CourseCard(
-            course: courses[index],
+          return GestureDetector(
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -65,6 +59,9 @@ class CourseListScreen extends StatelessWidget {
                 arguments: courses[index],
               );
             },
+            child: DummyCourseCard(
+              course: courses[index],
+            ),
           );
         },
       ),
