@@ -107,7 +107,7 @@ class _QRCodeGeneratorScreenState extends ConsumerState<QRCodeGeneratorScreen> {
                             });
                           },
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

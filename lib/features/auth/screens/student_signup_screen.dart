@@ -185,7 +185,7 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
                       if (number.isNotEmpty) {
                         _emailController.text = 'student$number@gmail.com';
                         _firstNameController.text = 'Student';
-                        _lastNameController.text = '$number';
+                        _lastNameController.text = number;
                         _studentNumberController.text = number.padLeft(8, '0');
                         _passwordController.text = 'student$number';
                         _confirmPasswordController.text = 'student$number';

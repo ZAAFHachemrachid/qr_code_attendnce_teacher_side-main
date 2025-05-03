@@ -15,9 +15,9 @@ class LiveSessionSocketService {
 
   // Stream getters for UI consumption
   Stream<LiveSessionStats> get statsUpdates =>
-      _statsController?.stream ?? Stream.empty();
+      _statsController?.stream ?? const Stream.empty();
   Stream<LiveAttendanceUpdate> get attendanceUpdates =>
-      _updatesController?.stream ?? Stream.empty();
+      _updatesController?.stream ?? const Stream.empty();
 
   Future<void> connect(String sessionId, String authToken) async {
     if (_disposed) return;
@@ -61,7 +61,7 @@ class LiveSessionSocketService {
         );
 
       // Subscribe to the channel
-      final status = await _channel?.subscribe();
+      final status = _channel?.subscribe();
       print('Channel subscription status: $status');
 
       if (status == 'SUBSCRIBED') {
@@ -79,10 +79,8 @@ class LiveSessionSocketService {
     if (_statsController?.isClosed == false) {
       try {
         final data = payload.newRecord;
-        if (data != null) {
-          _statsController?.add(LiveSessionStats.fromJson(data));
-        }
-      } catch (e) {
+        _statsController?.add(LiveSessionStats.fromJson(data));
+            } catch (e) {
         print('Error handling stats update: $e');
       }
     }
@@ -92,10 +90,8 @@ class LiveSessionSocketService {
     if (_updatesController?.isClosed == false) {
       try {
         final data = payload.newRecord;
-        if (data != null) {
-          _updatesController?.add(LiveAttendanceUpdate.fromJson(data));
-        }
-      } catch (e) {
+        _updatesController?.add(LiveAttendanceUpdate.fromJson(data));
+            } catch (e) {
         print('Error handling attendance update: $e');
       }
     }

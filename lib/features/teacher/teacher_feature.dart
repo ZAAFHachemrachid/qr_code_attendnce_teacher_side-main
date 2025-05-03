@@ -226,7 +226,7 @@ class TeacherDashboard extends ConsumerWidget {
                     Icons.qr_code,
                     Colors.green,
                     () {
-                      final demoClass = TeacherClass(
+                      const demoClass = TeacherClass(
                         id: 'demo',
                         code: 'DEMO101',
                         title: 'Demo Class',
