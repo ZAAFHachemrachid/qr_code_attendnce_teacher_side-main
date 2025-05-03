@@ -19,6 +19,7 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
   bool _isLoading = false;
   String? _error;
 
+  final _prefillNumberController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -28,6 +29,7 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
 
   @override
   void dispose() {
+    _prefillNumberController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -164,6 +166,47 @@ class _StudentSignupScreenState extends ConsumerState<StudentSignupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _prefillNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Prefill Number',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      final number = _prefillNumberController.text;
+                      if (number.isNotEmpty) {
+                        _emailController.text = 'student$number@gmail.com';
+                        _firstNameController.text = 'Student';
+                        _lastNameController.text = '$number';
+                        _studentNumberController.text = number.padLeft(8, '0');
+                        _passwordController.text = 'student$number';
+                        _confirmPasswordController.text = 'student$number';
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6AB19B),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Prefill'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               if (_error != null)
                 Container(
                   padding: const EdgeInsets.all(8),
