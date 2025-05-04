@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../student/models/attendance_history.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'date_range_filter.dart';
 
 class AttendanceHistoryView extends StatelessWidget {
   final AttendanceHistory history;
   final bool isCompact;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final Function(DateTime?, DateTime?)? onDateRangeChanged;
 
   const AttendanceHistoryView({
     super.key,
     required this.history,
     this.isCompact = false,
+    this.startDate,
+    this.endDate,
+    this.onDateRangeChanged,
   });
 
   @override
@@ -17,6 +24,15 @@ class AttendanceHistoryView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (!isCompact && onDateRangeChanged != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: DateRangeFilter(
+              startDate: startDate,
+              endDate: endDate,
+              onDateRangeChanged: onDateRangeChanged!,
+            ),
+          ),
         _buildStatistics(context),
         if (!isCompact) ...[
           const SizedBox(height: 24),

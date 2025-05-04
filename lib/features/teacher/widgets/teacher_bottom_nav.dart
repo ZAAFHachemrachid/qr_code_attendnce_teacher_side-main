@@ -84,8 +84,8 @@ class _Tile extends StatelessWidget {
 
     return SizedBox(
       width: 90.0,
-      height: 18.0,
-      child: ClipRect(
+      height: 56.0,
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

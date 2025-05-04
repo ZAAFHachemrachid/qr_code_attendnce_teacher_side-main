@@ -9,7 +9,7 @@ import '../../shared/widgets/attendance_history_view.dart';
 import '../../teacher/widgets/enhanced_student_card.dart';
 import '../models/student_profile.dart';
 
-class StudentProfileScreen extends ConsumerWidget {
+class StudentProfileScreen extends ConsumerStatefulWidget {
   final StudentData? studentData;
 
   const StudentProfileScreen({
@@ -18,25 +18,42 @@ class StudentProfileScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StudentProfileScreen> createState() =>
+      _StudentProfileScreenState();
+}
+
+class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
+  DateTime? _startDate;
+  DateTime? _endDate;
+
+  void _handleDateRangeChanged(DateTime? start, DateTime? end) {
+    setState(() {
+      _startDate = start;
+      _endDate = end;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     // If studentData is provided (teacher view), convert it to StudentProfile
     // Otherwise, fetch from provider (student view)
-    final profileAsync = studentData != null
+    final profileAsync = widget.studentData != null
         ? AsyncValue.data(StudentProfile(
-            id: studentData!.id,
-            studentNumber: studentData!.id,
-            groupId: studentData!.groupName,
-            firstName: studentData!.name.split(' ').first,
-            lastName: studentData!.name.split(' ').last,
+            id: widget.studentData!.id,
+            studentNumber: widget.studentData!.id,
+            groupId: widget.studentData!.groupName,
+            firstName: widget.studentData!.name.split(' ').first,
+            lastName: widget.studentData!.name.split(' ').last,
           ))
         : ref.watch(studentProfileProvider);
 
     final studentId =
-        studentData?.id ?? ref.read(authServiceProvider).currentUser?.id;
+        widget.studentData?.id ?? ref.read(authServiceProvider).currentUser?.id;
     final attendanceAsync = studentId != null
-        ? ref.watch(attendanceHistoryProvider(studentId))
+        ? ref
+            .watch(attendanceHistoryProvider((studentId, _startDate, _endDate)))
         : const AsyncValue.loading();
 
     return Scaffold(
@@ -124,6 +141,9 @@ class StudentProfileScreen extends ConsumerWidget {
                       attendanceAsync.when(
                         data: (attendance) => AttendanceHistoryView(
                           history: attendance,
+                          startDate: _startDate,
+                          endDate: _endDate,
+                          onDateRangeChanged: _handleDateRangeChanged,
                         ),
                         loading: () => const Center(
                           child: CircularProgressIndicator(),
