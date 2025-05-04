@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/student_providers.dart';
+import '../services/attendance_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'student_settings_screen.dart';
 import '../../../core/widgets/skeletons/profile_skeleton.dart';
+import '../../shared/widgets/attendance_history_view.dart';
+import '../../teacher/widgets/enhanced_student_card.dart';
+import '../models/student_profile.dart';
 
 class StudentProfileScreen extends ConsumerWidget {
-  const StudentProfileScreen({super.key});
+  final StudentData? studentData;
+
+  const StudentProfileScreen({
+    super.key,
+    this.studentData,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profileAsync = ref.watch(studentProfileProvider);
     final colorScheme = Theme.of(context).colorScheme;
+
+    // If studentData is provided (teacher view), convert it to StudentProfile
+    // Otherwise, fetch from provider (student view)
+    final profileAsync = studentData != null
+        ? AsyncValue.data(StudentProfile(
+            id: studentData!.id,
+            studentNumber: studentData!.id,
+            groupId: studentData!.groupName,
+            firstName: studentData!.name.split(' ').first,
+            lastName: studentData!.name.split(' ').last,
+          ))
+        : ref.watch(studentProfileProvider);
+
+    final studentId =
+        studentData?.id ?? ref.read(authServiceProvider).currentUser?.id;
+    final attendanceAsync = studentId != null
+        ? ref.watch(attendanceHistoryProvider(studentId))
+        : const AsyncValue.loading();
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +75,7 @@ class StudentProfileScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildInfoCard(
                         context,
@@ -87,6 +114,26 @@ class StudentProfileScreen extends ConsumerWidget {
                                 '',
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Attendance History',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 16),
+                      attendanceAsync.when(
+                        data: (attendance) => AttendanceHistoryView(
+                          history: attendance,
+                        ),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        error: (error, stack) => Center(
+                          child: Text(
+                            'Error loading attendance history',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                       FilledButton.tonal(
@@ -145,7 +192,8 @@ class StudentProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, dynamic profile) {
+  Widget _buildProfileHeader(BuildContext context, Object profileData) {
+    final profile = profileData as StudentProfile;
     final theme = Theme.of(context);
     return Stack(
       children: [
