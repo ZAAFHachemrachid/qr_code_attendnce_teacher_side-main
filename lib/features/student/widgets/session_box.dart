@@ -16,7 +16,7 @@ class SessionBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message:
-          '${sessionType} - ${_formatDate(sessionDate)}\n${isAttended ? 'Attended' : 'Missed'}',
+          '$sessionType - ${_formatDate(sessionDate)}\n${isAttended ? 'Attended' : 'Missed'}',
       child: Container(
         width: 32,
         height: 32,

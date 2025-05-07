@@ -4,18 +4,16 @@ class AppTheme {
   static const double borderRadius = 12.0;
   static const double spacing = 16.0;
 
-  static final ColorScheme colorScheme = ColorScheme.light(
+  static const ColorScheme colorScheme = ColorScheme.light(
     primary: const Color(0xFF1565C0),
     primaryContainer: const Color(0xFFE3F2FD),
     secondary: const Color(0xFF2E7D32),
     secondaryContainer: const Color(0xFFE8F5E9),
     surface: Colors.white,
-    background: const Color(0xFFF5F5F5),
     error: const Color(0xFFD32F2F),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: Colors.black87,
-    onBackground: Colors.black87,
     onError: Colors.white,
   );
 
@@ -25,7 +23,7 @@ class AppTheme {
   static ThemeData get theme => ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,
-        scaffoldBackgroundColor: colorScheme.background,
+        scaffoldBackgroundColor: colorScheme.surface,
         cardTheme: CardTheme(
           elevation: elevations.card,
           shape: RoundedRectangleBorder(

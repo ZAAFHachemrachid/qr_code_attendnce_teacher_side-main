@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../lib/features/shared/widgets/attendance_history_view.dart';
-import '../../../../lib/features/shared/widgets/date_range_filter.dart';
-import '../../../../lib/features/student/models/attendance_history.dart';
+import 'package:qr_code_attendance/features/shared/widgets/attendance_history_view.dart';
+import 'package:qr_code_attendance/features/shared/widgets/date_range_filter.dart';
+import 'package:qr_code_attendance/features/student/models/attendance_history.dart';
 
 void main() {
   final mockHistory = AttendanceHistory(
@@ -30,7 +30,7 @@ void main() {
         courseType: 'TP',
       ),
     ],
-    stats: AttendanceStats(
+    stats: const AttendanceStats(
       totalClasses: 3,
       presentCount: 1,
       absentCount: 1,

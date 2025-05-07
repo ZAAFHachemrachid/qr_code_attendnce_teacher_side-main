@@ -314,7 +314,7 @@ class AttendanceHistoryView extends StatelessWidget {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

@@ -251,7 +251,7 @@ class TeacherDashboard extends ConsumerWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (_) =>
-                                QRCodeGeneratorScreen(teacherClass: demoClass)),
+                                const QRCodeGeneratorScreen(teacherClass: demoClass)),
                       );
                     },
                   ),

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import '../../../lib/features/student/models/attendance_history.dart';
-import '../../../lib/features/student/services/attendance_service.dart';
+import 'package:qr_code_attendance/features/student/models/attendance_history.dart';
+import 'package:qr_code_attendance/features/student/services/attendance_service.dart';
 
 void main() {
   late AttendanceService attendanceService;
@@ -80,7 +80,7 @@ void main() {
 
   group('AttendanceStats Tests', () {
     test('calculates percentages correctly', () {
-      final stats = AttendanceStats(
+      const stats = AttendanceStats(
         totalClasses: 10,
         presentCount: 6,
         absentCount: 3,
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('handles zero total classes', () {
-      final stats = AttendanceStats(
+      const stats = AttendanceStats(
         totalClasses: 0,
         presentCount: 0,
         absentCount: 0,
@@ -106,7 +106,7 @@ void main() {
     });
 
     test('getStatusColor returns correct colors', () {
-      final stats = AttendanceStats(
+      const stats = AttendanceStats(
         totalClasses: 1,
         presentCount: 1,
         absentCount: 0,
@@ -190,7 +190,7 @@ void main() {
         )),
       );
 
-      final history = await futureHistory.when(
+      final history = futureHistory.when(
         data: (data) => data,
         loading: () => null,
         error: (_, __) => null,

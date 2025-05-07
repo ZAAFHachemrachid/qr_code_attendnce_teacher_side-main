@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../lib/features/student/models/dummy_course.dart';
-import '../../../lib/features/student/models/student_profile.dart';
-import '../../../lib/features/student/providers/dummy_course_provider.dart';
-import '../../../lib/features/student/providers/student_courses_provider.dart';
-import '../../../lib/features/student/providers/student_providers.dart';
-import '../../../lib/features/student/widgets/dummy_course_card.dart';
+import 'package:qr_code_attendance/features/student/models/dummy_course.dart';
+import 'package:qr_code_attendance/features/student/models/student_profile.dart';
+import 'package:qr_code_attendance/features/student/providers/dummy_course_provider.dart';
+import 'package:qr_code_attendance/features/student/providers/student_courses_provider.dart';
+import 'package:qr_code_attendance/features/student/providers/student_providers.dart';
+import 'package:qr_code_attendance/features/student/widgets/dummy_course_card.dart';
 
 class MockStudentCoursesNotifier extends StudentCoursesNotifier {
   @override
@@ -63,7 +63,7 @@ void main() {
         overrides: [
           studentProfileProvider.overrideWith(
             (ref) => Future.value(
-              StudentProfile(
+              const StudentProfile(
                 id: 'test-student',
                 studentNumber: 'TEST001',
                 groupId: 'no-group',

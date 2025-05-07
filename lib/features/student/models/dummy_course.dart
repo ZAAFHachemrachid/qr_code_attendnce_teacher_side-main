@@ -59,23 +59,21 @@ class DummyCourse extends ClassInfo {
   ];
 
   DummyCourse({
-    required String id,
+    required super.id,
     required this.studentId,
     required int academicYear,
-    required String semester,
+    required super.semester,
     required Map<String, dynamic> courseData,
   })  : isDummy = true,
         courseAttendance = _generateCourseAttendance(courseData['room']),
         tdAttendance = _generateTDAttendance(courseData['room']),
         tpAttendance = _generateTPAttendance(courseData['room']),
         super(
-          id: id,
           code: courseData['code'],
           title: courseData['title'],
           description: courseData['description'],
           creditHours: courseData['credits'],
           yearOfStudy: academicYear,
-          semester: semester,
           groups: [DummyGroup(professor: courseData['professor'])],
           schedule: courseData['schedule'],
           type: ClassType.course,

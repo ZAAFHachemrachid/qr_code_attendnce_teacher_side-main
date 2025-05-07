@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/live_session.dart';
 import '../models/live_attendance_update.dart';
 import '../models/live_session_stats.dart';
 

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/dummy_course.dart';
-import '../models/session_attendance.dart';
-import 'attendance_section.dart';
 
 class DummyCourseCard extends StatelessWidget {
   final DummyCourse course;

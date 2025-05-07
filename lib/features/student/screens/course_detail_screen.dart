@@ -29,8 +29,8 @@ class CourseDetailScreen extends StatelessWidget {
           title: Text(course.code),
           centerTitle: true,
           bottom: CustomTabBar(
-            tabs: ['Overview', 'Attendance', 'Sessions'],
-            icons: [Icons.info_outline, Icons.bar_chart, Icons.calendar_today],
+            tabs: const ['Overview', 'Attendance', 'Sessions'],
+            icons: const [Icons.info_outline, Icons.bar_chart, Icons.calendar_today],
           ),
         ),
         body: TabBarView(

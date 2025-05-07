@@ -54,7 +54,7 @@ class StudentCoursesScreen extends ConsumerWidget {
     List<DummyCourse> dummyCourses,
   ) {
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: const Text('My Courses'),
         actions: [

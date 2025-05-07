@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../../../lib/features/shared/widgets/date_range_filter.dart';
+import 'package:qr_code_attendance/features/shared/widgets/date_range_filter.dart';
 
 void main() {
   group('DateRangeFilter Widget Tests', () {

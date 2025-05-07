@@ -148,7 +148,7 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
                         loading: () => const Center(
                           child: CircularProgressIndicator(),
                         ),
-                        error: (error, stack) => Center(
+                        error: (error, stack) => const Center(
                           child: Text(
                             'Error loading attendance history',
                             style: TextStyle(color: Colors.red),

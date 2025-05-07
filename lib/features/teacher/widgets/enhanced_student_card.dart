@@ -38,33 +38,33 @@ class EnhancedStudentCard extends StatelessWidget {
 
   void _showQuickActions(BuildContext context) {
     final items = [
-      PopupMenuItem(
+      const PopupMenuItem(
         value: 'view',
         child: Row(
           children: [
-            const Icon(Icons.visibility),
-            const SizedBox(width: 8),
-            const Text('View Details'),
+            Icon(Icons.visibility),
+            SizedBox(width: 8),
+            Text('View Details'),
           ],
         ),
       ),
-      PopupMenuItem(
+      const PopupMenuItem(
         value: 'message',
         child: Row(
           children: [
-            const Icon(Icons.message),
-            const SizedBox(width: 8),
-            const Text('Send Message'),
+            Icon(Icons.message),
+            SizedBox(width: 8),
+            Text('Send Message'),
           ],
         ),
       ),
-      PopupMenuItem(
+      const PopupMenuItem(
         value: 'attendance',
         child: Row(
           children: [
-            const Icon(Icons.event_note),
-            const SizedBox(width: 8),
-            const Text('View Attendance'),
+            Icon(Icons.event_note),
+            SizedBox(width: 8),
+            Text('View Attendance'),
           ],
         ),
       ),
@@ -72,7 +72,7 @@ class EnhancedStudentCard extends StatelessWidget {
 
     showMenu(
       context: context,
-      position: RelativeRect.fromLTRB(0, 0, 0, 0),
+      position: const RelativeRect.fromLTRB(0, 0, 0, 0),
       items: items,
     ).then((value) {
       if (value != null && onActionSelected != null) {
