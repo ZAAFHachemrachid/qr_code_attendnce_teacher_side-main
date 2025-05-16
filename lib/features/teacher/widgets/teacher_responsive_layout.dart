@@ -6,14 +6,12 @@ class TeacherResponsiveLayout extends StatefulWidget {
   final Widget child;
   final int currentIndex;
   final Function(int) onNavigationTap;
-  final VoidCallback onSettingsTap;
 
   const TeacherResponsiveLayout({
     super.key,
     required this.child,
     required this.currentIndex,
     required this.onNavigationTap,
-    required this.onSettingsTap,
   });
 
   @override
@@ -49,7 +47,6 @@ class _TeacherResponsiveLayoutState extends State<TeacherResponsiveLayout> {
                   onTap: widget.onNavigationTap,
                   isExpanded: _isSidebarExpanded,
                   onExpandToggle: _toggleSidebar,
-                  onSettingsTap: widget.onSettingsTap,
                 ),
               ),
               Expanded(
@@ -71,7 +68,6 @@ class _TeacherResponsiveLayoutState extends State<TeacherResponsiveLayout> {
           bottomNavigationBar: TeacherBottomNav(
             currentIndex: widget.currentIndex,
             onTap: widget.onNavigationTap,
-            onSettingsTap: widget.onSettingsTap,
           ),
         );
       },

@@ -5,7 +5,6 @@ class TeacherSidebarNav extends StatelessWidget {
   final ValueChanged<int> onTap;
   final bool isExpanded;
   final VoidCallback onExpandToggle;
-  final VoidCallback onSettingsTap;
 
   const TeacherSidebarNav({
     super.key,
@@ -13,7 +12,6 @@ class TeacherSidebarNav extends StatelessWidget {
     required this.onTap,
     required this.isExpanded,
     required this.onExpandToggle,
-    required this.onSettingsTap,
   });
 
   @override
@@ -36,19 +34,23 @@ class TeacherSidebarNav extends StatelessWidget {
       ),
       destinations: const [
         NavigationRailDestination(
-          icon: Icon(Icons.dashboard),
-          label: Text('Dashboard'),
+          icon: Icon(Icons.home, size: 24),
+          label: Text('Home'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.calendar_today),
-          label: Text('Schedule'),
+          icon: Icon(Icons.timeline, size: 24),
+          label: Text('Timeline'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.class_),
-          label: Text('Classes'),
+          icon: Icon(Icons.class_, size: 24),
+          label: Text('Class'),
         ),
         NavigationRailDestination(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.people, size: 24),
+          label: Text('Students'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.person, size: 24),
           label: Text('Profile'),
         ),
       ],
@@ -57,18 +59,14 @@ class TeacherSidebarNav extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Spacer(), // Push settings to bottom
+            const Spacer(),
             IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: onSettingsTap,
-            ),
-            const SizedBox(height: 8),
-            IconButton(
-              icon: const Icon(Icons.help),
+              icon: const Icon(Icons.help, size: 24),
               onPressed: () {
                 // TODO: Implement help
                 debugPrint('Help pressed');
               },
+              tooltip: 'Help',
             ),
             const SizedBox(height: 16),
           ],

@@ -20,8 +20,10 @@ class DateRangeFilter extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Header row with title and clear button
             Row(
               children: [
                 Icon(
@@ -41,27 +43,31 @@ class DateRangeFilter extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDateSelector(
-                    context,
-                    label: 'Start Date',
-                    value: startDate,
-                    onSelect: (date) => onDateRangeChanged(date, endDate),
+            const SizedBox(height: 12),
+            // Date selectors row
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _buildDateSelector(
+                      context,
+                      label: 'Start Date',
+                      value: startDate,
+                      onSelect: (date) => onDateRangeChanged(date, endDate),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDateSelector(
-                    context,
-                    label: 'End Date',
-                    value: endDate,
-                    onSelect: (date) => onDateRangeChanged(startDate, date),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildDateSelector(
+                      context,
+                      label: 'End Date',
+                      value: endDate,
+                      onSelect: (date) => onDateRangeChanged(startDate, date),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

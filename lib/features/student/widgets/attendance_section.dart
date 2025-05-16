@@ -45,11 +45,14 @@ class AttendanceSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              Flexible(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(width: 12),
               Container(
@@ -97,7 +100,8 @@ class AttendanceSection extends StatelessWidget {
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
                 height: 8,
-                width: MediaQuery.of(context).size.width *
+                width: (MediaQuery.of(context).size.width -
+                        32) * // Subtract padding
                     (attendancePercentage / 100),
                 decoration: BoxDecoration(
                   gradient: _getStatusGradient(attendancePercentage),

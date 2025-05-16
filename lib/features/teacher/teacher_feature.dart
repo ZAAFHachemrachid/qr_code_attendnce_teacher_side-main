@@ -22,7 +22,6 @@ class TeacherFeature extends ConsumerStatefulWidget {
 
 class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
   int _selectedIndex = 0;
-  bool _showSettings = false;
   late final List<Widget> _screens;
 
   @override
@@ -30,8 +29,9 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
     super.initState();
     _screens = [
       const TeacherDashboard(),
-      const TeachingScheduleScreen(),
+      const TeachingScheduleScreen(), // Timeline
       const ClassesScreen(),
+      const StudentsScreen(),
       const ProfileScreen(),
     ];
   }
@@ -47,28 +47,21 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
       case 0:
         return 'Teacher Dashboard';
       case 1:
-        return 'Teaching Schedule';
+        return 'Timeline';
       case 2:
         return 'My Classes';
       case 3:
+        return 'Students';
+      case 4:
         return 'Profile';
       default:
         return 'Teacher Dashboard';
     }
   }
 
-  void _toggleSettings() {
-    setState(() {
-      _showSettings = false;
-      if (_selectedIndex == -1) {
-        _selectedIndex = 0;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final screenTitle = _showSettings ? 'Settings' : _screenTitle;
+    final screenTitle = _screenTitle;
 
     return Scaffold(
       appBar: AppBar(
@@ -89,23 +82,8 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
       ),
       body: TeacherResponsiveLayout(
         currentIndex: _selectedIndex,
-        onNavigationTap: (index) {
-          _showSettings = false;
-          _handleNavigationTap(index);
-        },
-        onSettingsTap: () {
-          setState(() {
-            _showSettings = !_showSettings;
-            if (_showSettings) {
-              _selectedIndex = -1;
-            } else {
-              _selectedIndex = 0;
-            }
-          });
-        },
-        child: _showSettings
-            ? const TeacherSettingsScreen()
-            : _screens[_selectedIndex],
+        onNavigationTap: _handleNavigationTap,
+        child: _screens[_selectedIndex],
       ),
     );
   }
@@ -250,8 +228,8 @@ class TeacherDashboard extends ConsumerWidget {
                       );
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (_) =>
-                                const QRCodeGeneratorScreen(teacherClass: demoClass)),
+                            builder: (_) => const QRCodeGeneratorScreen(
+                                teacherClass: demoClass)),
                       );
                     },
                   ),

@@ -5,7 +5,6 @@ import 'date_range_filter.dart';
 
 class AttendanceHistoryView extends StatelessWidget {
   final AttendanceHistory history;
-  final bool isCompact;
   final DateTime? startDate;
   final DateTime? endDate;
   final Function(DateTime?, DateTime?)? onDateRangeChanged;
@@ -13,7 +12,6 @@ class AttendanceHistoryView extends StatelessWidget {
   const AttendanceHistoryView({
     super.key,
     required this.history,
-    this.isCompact = false,
     this.startDate,
     this.endDate,
     this.onDateRangeChanged,
@@ -24,7 +22,7 @@ class AttendanceHistoryView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (!isCompact && onDateRangeChanged != null)
+        if (onDateRangeChanged != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: DateRangeFilter(
@@ -34,12 +32,10 @@ class AttendanceHistoryView extends StatelessWidget {
             ),
           ),
         _buildStatistics(context),
-        if (!isCompact) ...[
-          const SizedBox(height: 24),
-          _buildTimeline(context),
-          const SizedBox(height: 24),
-          _buildDetailedRecords(context),
-        ],
+        const SizedBox(height: 24),
+        _buildTimeline(context),
+        const SizedBox(height: 24),
+        _buildDetailedRecords(context),
       ],
     );
   }

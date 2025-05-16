@@ -66,8 +66,7 @@ void main() {
   );
 
   group('AttendanceHistoryView Widget Tests', () {
-    testWidgets('renders all sections in full mode',
-        (WidgetTester tester) async {
+    testWidgets('renders all sections', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -84,25 +83,6 @@ void main() {
       expect(find.text('Attendance by Course'), findsOneWidget);
       expect(find.byType(PieChart), findsOneWidget);
       expect(find.byType(DateRangeFilter), findsOneWidget);
-    });
-
-    testWidgets('renders only overview in compact mode',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: AttendanceHistoryView(
-              history: mockHistory,
-              isCompact: true,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Attendance Overview'), findsOneWidget);
-      expect(find.text('Recent Activity'), findsNothing);
-      expect(find.text('Attendance by Course'), findsNothing);
-      expect(find.byType(DateRangeFilter), findsNothing);
     });
 
     testWidgets('displays correct stats in legend',
