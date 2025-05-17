@@ -26,8 +26,7 @@ class FilterOptions {
 
 enum StudentViewMode {
   list,
-  grid,
-  compact;
+  grid;
 
   IconData get icon {
     switch (this) {
@@ -35,8 +34,6 @@ enum StudentViewMode {
         return Icons.view_list;
       case StudentViewMode.grid:
         return Icons.grid_view;
-      case StudentViewMode.compact:
-        return Icons.view_headline;
     }
   }
 
@@ -46,8 +43,6 @@ enum StudentViewMode {
         return 'List';
       case StudentViewMode.grid:
         return 'Grid';
-      case StudentViewMode.compact:
-        return 'Compact';
     }
   }
 }
@@ -175,7 +170,7 @@ class _EnhancedStudentViewState extends State<EnhancedStudentView> {
                 // View mode selector
                 ...StudentViewMode.values.map((mode) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: EdgeInsets.zero,
                     child: IconButton(
                       onPressed: () => setState(() => _currentViewMode = mode),
                       icon: Icon(mode.icon),
@@ -339,26 +334,6 @@ class _EnhancedStudentViewState extends State<EnhancedStudentView> {
           },
         );
 
-      case StudentViewMode.compact:
-        return ListView.builder(
-          itemCount: students.length,
-          itemBuilder: (context, index) {
-            final student = students[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: EnhancedStudentCard(
-                student: student,
-                onTap: () => _handleStudentTap(student),
-                isSelected: _selectedStudentIds.contains(student.id),
-                isCompact: true,
-                onActionSelected: widget.onActionSelected != null
-                    ? (action) => widget.onActionSelected!(action, student)
-                    : null,
-              ),
-            );
-          },
-        );
-
       case StudentViewMode.list:
       default:
         return ListView.builder(
@@ -387,39 +362,6 @@ class _EnhancedStudentViewState extends State<EnhancedStudentView> {
       children: [
         _buildSearchBar(),
         _buildToolbar(),
-        if (_selectedStudentIds.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Text(
-                  '${_selectedStudentIds.length} selected',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Spacer(),
-                // Batch action buttons
-                IconButton(
-                  icon: const Icon(Icons.message),
-                  onPressed: () {
-                    // TODO: Implement batch messaging
-                  },
-                  tooltip: 'Message Selected',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.group),
-                  onPressed: () {
-                    // TODO: Implement batch group assignment
-                  },
-                  tooltip: 'Assign to Group',
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: () => setState(() => _selectedStudentIds.clear()),
-                  child: const Text('Clear Selection'),
-                ),
-              ],
-            ),
-          ),
         Expanded(
           child: _buildStudentList(),
         ),

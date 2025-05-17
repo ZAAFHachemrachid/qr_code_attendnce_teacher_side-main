@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/course.dart';
 import 'models/teacher_class.dart';
 import 'providers/teacher_profile_provider.dart';
-import 'screens/teacher_settings_screen.dart';
 import 'screens/attendance_screen.dart';
 import 'screens/classes_screen.dart';
 import 'screens/profile_screen.dart';

@@ -5,12 +5,12 @@ class AppTheme {
   static const double spacing = 16.0;
 
   static const ColorScheme colorScheme = ColorScheme.light(
-    primary: const Color(0xFF1565C0),
-    primaryContainer: const Color(0xFFE3F2FD),
-    secondary: const Color(0xFF2E7D32),
-    secondaryContainer: const Color(0xFFE8F5E9),
+    primary: Color(0xFF1565C0),
+    primaryContainer: Color(0xFFE3F2FD),
+    secondary: Color(0xFF2E7D32),
+    secondaryContainer: Color(0xFFE8F5E9),
     surface: Colors.white,
-    error: const Color(0xFFD32F2F),
+    error: Color(0xFFD32F2F),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: Colors.black87,
