@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'teacher_bottom_nav.dart';
-import 'teacher_sidebar_nav.dart';
+import 'teacher_navigation.dart';
 
 class TeacherResponsiveLayout extends StatefulWidget {
   final Widget child;
@@ -40,15 +40,12 @@ class _TeacherResponsiveLayoutState extends State<TeacherResponsiveLayout> {
         if (isDesktop) {
           return Row(
             children: [
-              SizedBox(
-                width: _isSidebarExpanded ? 240.0 : 72.0,
-                child: TeacherSidebarNav(
+              TeacherNavigation(
                   currentIndex: widget.currentIndex,
-                  onTap: widget.onNavigationTap,
+                  onDestinationSelected: widget.onNavigationTap,
                   isExpanded: _isSidebarExpanded,
                   onExpandToggle: _toggleSidebar,
                 ),
-              ),
               Expanded(
                 child: Container(
                   constraints: const BoxConstraints.expand(),
