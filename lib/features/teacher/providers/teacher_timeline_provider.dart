@@ -6,21 +6,116 @@ final teacherServiceProvider = Provider<TeacherService>((ref) {
   return TeacherService();
 });
 
+// Dummy data generator for development and testing
+List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
+  if (teacherId != 'eafc923b-e4ab-4588-99a5-820138727af0') {
+    return [];
+  }
+
+  return [
+    TeacherTimelineEntry(
+      id: '1',
+      courseName: 'Advanced Software Engineering',
+      courseCode: 'CSE401',
+      type: 'Lecture',
+      groupName: 'Group A',
+      dayOfWeek: 'Monday',
+      startTime: '09:00',
+      endTime: '10:30',
+      slotNumber: 1,
+      room: 'Room 301',
+    ),
+    TeacherTimelineEntry(
+      id: '2',
+      courseName: 'Advanced Software Engineering',
+      courseCode: 'CSE401',
+      type: 'Lab',
+      groupName: 'Group A',
+      dayOfWeek: 'Monday',
+      startTime: '10:45',
+      endTime: '12:15',
+      slotNumber: 2,
+      room: 'Lab 102',
+    ),
+    TeacherTimelineEntry(
+      id: '3',
+      courseName: 'Data Science Fundamentals',
+      courseCode: 'DS201',
+      type: 'Lecture',
+      groupName: 'Group B',
+      dayOfWeek: 'Tuesday',
+      startTime: '13:00',
+      endTime: '14:30',
+      slotNumber: 4,
+      room: 'Room 205',
+    ),
+    TeacherTimelineEntry(
+      id: '4',
+      courseName: 'Machine Learning',
+      courseCode: 'CSE405',
+      type: 'Tutorial',
+      groupName: 'Group C',
+      dayOfWeek: 'Wednesday',
+      startTime: '11:00',
+      endTime: '12:30',
+      slotNumber: 3,
+      room: 'Room 401',
+    ),
+    TeacherTimelineEntry(
+      id: '5',
+      courseName: 'Data Science Fundamentals',
+      courseCode: 'DS201',
+      type: 'Lab',
+      groupName: 'Group B',
+      dayOfWeek: 'Thursday',
+      startTime: '14:45',
+      endTime: '16:15',
+      slotNumber: 5,
+      room: 'Lab 103',
+    ),
+    TeacherTimelineEntry(
+      id: '6',
+      courseName: 'Machine Learning',
+      courseCode: 'CSE405',
+      type: 'Lecture',
+      groupName: 'Group C',
+      dayOfWeek: 'Thursday',
+      startTime: '09:00',
+      endTime: '10:30',
+      slotNumber: 1,
+      room: 'Room 302',
+    ),
+    TeacherTimelineEntry(
+      id: '7',
+      courseName: 'Advanced Software Engineering',
+      courseCode: 'CSE401',
+      type: 'Tutorial',
+      groupName: 'Group A',
+      dayOfWeek: 'Friday',
+      startTime: '13:00',
+      endTime: '14:30',
+      slotNumber: 4,
+      room: 'Room 203',
+    ),
+  ];
+}
+
 final teacherTimelineProvider =
     FutureProvider<List<TeacherTimelineEntry>>((ref) async {
-  final teacherService = ref.watch(teacherServiceProvider);
-  return await teacherService.getWeeklySchedule();
+  // For development, return dummy data for specific teacher ID
+  const teacherId = 'eafc923b-e4ab-4588-99a5-820138727af0';
+  return _generateDummyTimelineEntries(teacherId);
 });
 
 final allDaysProvider = Provider<List<String>>((ref) {
   return [
+    'Saturday',
+    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
+    'Friday'
   ];
 });
 
@@ -29,25 +124,25 @@ List<String> getSortedDays(
     Map<String, List<TeacherTimelineEntry>> groupedEntries) {
   final days = groupedEntries.keys.isEmpty
       ? [
+          'Saturday',
+          'Sunday',
           'Monday',
           'Tuesday',
           'Wednesday',
           'Thursday',
-          'Friday',
-          'Saturday',
-          'Sunday'
+          'Friday'
         ]
       : groupedEntries.keys.toList();
 
   days.sort((a, b) {
     const orderMap = {
-      'Monday': 1,
-      'Tuesday': 2,
-      'Wednesday': 3,
-      'Thursday': 4,
-      'Friday': 5,
-      'Saturday': 6,
-      'Sunday': 7,
+      'Saturday': 0,
+      'Sunday': 1,
+      'Monday': 2,
+      'Tuesday': 3,
+      'Wednesday': 4,
+      'Thursday': 5,
+      'Friday': 6,
     };
     return (orderMap[a] ?? 0).compareTo(orderMap[b] ?? 0);
   });

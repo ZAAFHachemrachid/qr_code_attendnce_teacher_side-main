@@ -13,51 +13,38 @@ class TeacherBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BottomAppBar(
-      height: 101.0, // Reduced height for navigation
-      elevation: 4.0,
-      shadowColor: theme.colorScheme.primary.withOpacity(0.2),
-      surfaceTintColor: theme.colorScheme.surface,
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: [
-          _buildNavigationBarItem(Icons.home, 'Home', 'Navigate to Home'),
-          _buildNavigationBarItem(
-              Icons.timeline, 'Timeline', 'Navigate to Timeline'),
-          _buildNavigationBarItem(Icons.class_, 'Class', 'Navigate to Class'),
-          _buildNavigationBarItem(Icons.people, 'Students', 'View Students'),
-          _buildNavigationBarItem(
-              Icons.person, 'Profile', 'Navigate to Profile'),
-        ],
-      ),
-    );
-  }
+    
+    // Navigation items data
+    final items = [
+      (Icons.home, 'Home', 'Navigate to Home'),
+      (Icons.timeline, 'Timeline', 'Navigate to Timeline'),
+      (Icons.class_, 'Class', 'Navigate to Class'),
+      (Icons.people, 'Students', 'View Students'),
+      (Icons.person, 'Profile', 'Navigate to Profile'),
+    ];
 
-  BottomNavigationBarItem _buildNavigationBarItem(
-      IconData icon, String label, String semanticLabel) {
-    return BottomNavigationBarItem(
-      icon: _Tile(
-        icon: icon,
-        label: label,
-        isSelected: false,
-        semanticLabel: semanticLabel,
+    return BottomAppBar(
+      height: 72.0,
+      elevation: 2.0,
+      shadowColor: theme.colorScheme.primary.withOpacity(0.1),
+      surfaceTintColor: theme.colorScheme.surface,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(items.length, (index) {
+          final (icon, label, semanticLabel) = items[index];
+          return Expanded(
+            child: Center(
+              child: _Tile(
+                icon: icon,
+                label: label,
+                isSelected: currentIndex == index,
+                semanticLabel: semanticLabel,
+                onTap: () => onTap(index),
+              ),
+            ),
+          );
+        }),
       ),
-      activeIcon: _Tile(
-        icon: icon,
-        label: label,
-        isSelected: true,
-        semanticLabel: semanticLabel,
-      ),
-      label: '',
-      tooltip: semanticLabel,
     );
   }
 }
@@ -67,12 +54,14 @@ class _Tile extends StatefulWidget {
   final String label;
   final bool isSelected;
   final String semanticLabel;
+  final VoidCallback onTap;
 
   const _Tile({
     required this.icon,
     required this.label,
     required this.isSelected,
     required this.semanticLabel,
+    required this.onTap,
   });
 
   @override
@@ -82,6 +71,8 @@ class _Tile extends StatefulWidget {
 class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _scaleAnimation;
+  final GlobalKey _iconKey = GlobalKey();
+  bool _isTapWithinBounds = false;
 
   @override
   void initState() {
@@ -90,7 +81,7 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate( // Reduced scale animation
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -113,6 +104,19 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  bool _isWithinIconBounds(Offset localPosition) {
+    if (_iconKey.currentContext == null) return false;
+    final RenderBox iconBox = _iconKey.currentContext!.findRenderObject() as RenderBox;
+    final Size iconSize = iconBox.size;
+    
+    // Use 24x24 hit target while keeping visual size at 18x18
+    final hitTargetSize = 24.0;
+    return localPosition.dx >= (iconSize.width - hitTargetSize) / 2 &&
+           localPosition.dx <= (iconSize.width + hitTargetSize) / 2 &&
+           localPosition.dy >= (iconSize.height - hitTargetSize) / 2 &&
+           localPosition.dy <= (iconSize.height + hitTargetSize) / 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -124,23 +128,56 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
     return Semantics(
       selected: widget.isSelected,
       label: widget.semanticLabel,
-      child: LayoutBuilder(
-        builder: (context, constraints) => Container(
-          constraints: BoxConstraints(
-            minWidth: 56, // Minimum width for touch target
-            minHeight: 42, // Adjusted height for new container size
-          ),
-          width: constraints.maxWidth,
-          child: Center(
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: Icon(
-                widget.icon,
-                size: 20,
-                color: color,
+      child: SizedBox(
+        width: 72,
+        height: 72,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Center(
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () {
+                  final RenderBox? box = _iconKey.currentContext?.findRenderObject() as RenderBox?;
+                  if (box != null) {
+                    final Offset center = box.size.center(Offset.zero);
+                    _isTapWithinBounds = _isWithinIconBounds(center);
+                    if (_isTapWithinBounds) {
+                      widget.onTap();
+                    }
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Icon(
+                      key: _iconKey,
+                      widget.icon,
+                      size: 18,
+                      color: color,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+            if (widget.isSelected)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 12,
+                child: Center(
+                  child: Container(
+                    width: 4,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

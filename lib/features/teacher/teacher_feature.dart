@@ -8,7 +8,7 @@ import 'screens/classes_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/qr_code_generator_screen.dart';
 import 'screens/students_screen.dart';
-import 'screens/teaching_schedule_screen.dart';
+import 'screens/teacher_timeline_screen.dart';
 import '../../screens/role_selection_screen.dart';
 import 'widgets/teacher_responsive_layout.dart';
 
@@ -28,7 +28,7 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
     super.initState();
     _screens = [
       const TeacherDashboard(),
-      const TeachingScheduleScreen(), // Timeline
+      const TeacherTimelineScreen(), // Timeline
       const ClassesScreen(),
       const StudentsScreen(),
       const ProfileScreen(),
