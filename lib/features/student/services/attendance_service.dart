@@ -90,6 +90,20 @@ class AttendanceService {
       recordsByClass: recordsByClass,
     );
   }
+  /// Validates if the session is valid for attendance (stub).
+  Future<bool> validateSession(String sessionId) async {
+    // TODO: Implement actual session validation logic (API call)
+    await Future.delayed(const Duration(milliseconds: 500));
+    // For demonstration, treat any non-empty sessionId as valid except "INVALID"
+    return sessionId.isNotEmpty && sessionId != "INVALID";
+  }
+
+  /// Adds the student's attendance for the session (stub).
+  Future<void> addAttendance(String sessionId, String studentId) async {
+    // TODO: Implement actual attendance marking logic (API call)
+    await Future.delayed(const Duration(milliseconds: 500));
+    // No-op for stub
+  }
 }
 
 final attendanceServiceProvider = Provider<AttendanceService>((ref) {

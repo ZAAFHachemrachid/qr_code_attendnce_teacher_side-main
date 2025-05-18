@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/teacher_class.dart';
 import '../../auth/providers/auth_provider.dart';
+import 'dummy_teacher_classes_provider.dart';
 
 final teacherClassesProvider =
     AsyncNotifierProvider<TeacherClassesNotifier, List<TeacherClass>>(() {
@@ -80,15 +81,20 @@ class TeacherClassesNotifier extends AsyncNotifier<List<TeacherClass>> {
   Future<List<TeacherClass>> build() async {
     final authState = ref.watch(authStateProvider);
 
-    return authState.when(
+    return await authState.when(
       data: (state) async {
         if (state.session?.user.id == null) {
           return [];
         }
-        return _fetchClasses(state.session!.user.id);
+        final realClasses = await _fetchClasses(state.session!.user.id);
+        if (realClasses.isEmpty) {
+          final dummyAsync = ref.read(dummyTeacherClassesProvider);
+          return dummyAsync.value ?? [];
+        }
+        return realClasses;
       },
-      loading: () => [],
-      error: (_, __) => [],
+      loading: () async => [],
+      error: (_, __) async => [],
     );
   }
 

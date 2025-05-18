@@ -63,7 +63,7 @@ class ClassesScreen extends ConsumerWidget {
               data: (classes) => classes.isEmpty
                   ? Center(
                       child: Text(
-                        'No classes found for academic year $currentPeriod',
+                        'No classes found for academic year $currentPeriod.\n(No real or dummy classes available)',
                         textAlign: TextAlign.center,
                       ),
                     )
