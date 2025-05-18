@@ -183,19 +183,20 @@ class TeacherTimelineScreen extends ConsumerWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16), // Increased outer margin
-                padding: const EdgeInsets.all(8), // Added padding around table
-                constraints: const BoxConstraints(
-                  minWidth: 1200, // Increased minimum width for better spacing
+                margin: const EdgeInsets.all(8),
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width - 32,
+                  maxWidth: 1600, // Prevent excessive stretching on large screens
+                  minHeight: MediaQuery.of(context).size.height * 0.7,
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(color: theme.dividerColor),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Table(
-                  defaultColumnWidth: const FixedColumnWidth(180), // Increased column width
+                  defaultColumnWidth: const FixedColumnWidth(220), // Increased day column width
                   columnWidths: const {
-                    0: FixedColumnWidth(120), // Time column can be slightly narrower
+                    0: FixedColumnWidth(160), // Increased time column width
                   },
                   border: TableBorder.all(
                     color: theme.dividerColor,
@@ -210,7 +211,9 @@ class TeacherTimelineScreen extends ConsumerWidget {
                       children: [
                         TableCell(
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width < 768 ? 8 : 16
+                            ),
                             child: Text(
                               'Time',
                               style: theme.textTheme.titleMedium?.copyWith(
@@ -222,7 +225,9 @@ class TeacherTimelineScreen extends ConsumerWidget {
                         ),
                         ...days.map((day) => TableCell(
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width < 768 ? 8 : 16
+                                ),
                                 decoration: BoxDecoration(
                                   border: day == today
                                       ? Border(
@@ -237,6 +242,8 @@ class TeacherTimelineScreen extends ConsumerWidget {
                                   day,
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context).size.width < 768 ?
+                                      14 : theme.textTheme.titleMedium?.fontSize,
                                     color: day == today
                                         ? theme.colorScheme.primary
                                         : null,
@@ -252,12 +259,15 @@ class TeacherTimelineScreen extends ConsumerWidget {
                         children: [
                           TableCell(
                             child: Container(
-                              height: 140, // Increased cell height for better spacing
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width < 768 ? 8 : 16
+                              ),
                               alignment: Alignment.center,
                               child: Text(
                                 _timeSlots[slotIndex],
-                                style: theme.textTheme.titleSmall,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontSize: MediaQuery.of(context).size.width < 768 ? 12 : null,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -291,11 +301,20 @@ class TeacherTimelineScreen extends ConsumerWidget {
 
   Widget _buildScheduleCell(TeacherTimelineEntry? entry, BuildContext context) {
     final theme = Theme.of(context);
+    const double cellHeight = 200.0;
+    const double cellPadding = 8.0;
+
     if (entry == null) {
-      return const TableCell(
-        child: SizedBox(
-          height: 140, // Match the time slot height
-          child: Center(child: Text('-')),
+      return TableCell(
+        verticalAlignment: TableCellVerticalAlignment.fill,
+        child: Container(
+          height: cellHeight,
+          padding: const EdgeInsets.all(cellPadding),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
+          ),
+          child: const Text('-'),
         ),
       );
     }
@@ -304,61 +323,83 @@ class TeacherTimelineScreen extends ConsumerWidget {
     final icon = _getTypeIcon(entry.type);
 
     return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.fill,
       child: Card(
-        margin: const EdgeInsets.all(12), // Increased cell margin
+        margin: const EdgeInsets.all(4),
         color: baseColor.withOpacity(0.1),
         child: InkWell(
           onTap: () => _showSessionDetails(context, entry, baseColor),
           child: Container(
-            height: 130, // Adjusted card height to match new cell size
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // Increased horizontal padding
+            height: cellHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    Icon(icon, size: 16, color: baseColor),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        entry.courseName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: baseColor,
-                          fontWeight: FontWeight.bold,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 195),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 16, color: baseColor),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          entry.courseName,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: baseColor,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  entry.groupName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: baseColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                const Spacer(),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 195),
                   child: Text(
-                    'Room ${entry.room}',
+                    entry.groupName,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: baseColor,
-                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface.withOpacity(0.8),
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SizedBox(
+                  width: 195,
+                  child: Center(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 120),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: baseColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: baseColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'Room ${entry.room}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: baseColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
               ],
