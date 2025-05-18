@@ -175,125 +175,158 @@ class TeacherTimelineScreen extends ConsumerWidget {
     final days = entries.isEmpty ? allDays : _getSortedDays(groupedEntries, allDays);
     final today = _getCurrentDayName();
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            SingleChildScrollView(
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                constraints: BoxConstraints(
-                  maxWidth: 1600, // Prevent excessive stretching on large screens
-                  minHeight: MediaQuery.of(context).size.height * 0.7,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 1600,
+                  minHeight: 0,
+                  minWidth: 0,
                 ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: theme.dividerColor),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Table(
-                  defaultColumnWidth: const FixedColumnWidth(240), // Increased column width for better content fit
-                  columnWidths: const {
-                    0: FixedColumnWidth(180), // Increased time column width
-                  },
-                  border: TableBorder.all(
-                    color: theme.dividerColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  children: [
-                    TableRow(
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest
-                            .withOpacity(0.3),
-                      ),
-                      children: [
-                        TableCell(
-                          child: Padding(
-                            padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width < 768 ? 8 : 16
-                            ),
-                            child: Text(
-                              'Time',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Table(
+                          defaultColumnWidth: const FixedColumnWidth(240),
+                          columnWidths: const {
+                            0: FixedColumnWidth(180),
+                          },
+                          border: TableBorder.symmetric(
+                            inside: BorderSide(color: theme.dividerColor.withOpacity(0.18), width: 0.7),
+                            outside: BorderSide(color: theme.dividerColor, width: 1.2),
                           ),
-                        ),
-                        ...days.map((day) => TableCell(
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width < 768 ? 8 : 16
+                          children: [
+                            TableRow(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    theme.colorScheme.primary.withOpacity(0.09),
+                                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.18),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
                                 ),
-                                decoration: BoxDecoration(
-                                  border: day == today
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            color: theme.colorScheme.primary,
-                                            width: 3,
-                                          ),
-                                        )
-                                      : null,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(18),
+                                  topRight: Radius.circular(18),
                                 ),
-                                child: Text(
-                                  day,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width < 768 ?
-                                      14 : theme.textTheme.titleMedium?.fontSize,
-                                    color: day == today
-                                        ? theme.colorScheme.primary
-                                        : null,
+                              ),
+                              children: [
+                                TableCell(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width < 768 ? 10 : 20
+                                    ),
+                                    child: Text(
+                                      'Time',
+                                      style: theme.textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: MediaQuery.of(context).size.width < 768 ? 15 : 18,
+                                        letterSpacing: 0.5,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            )),
-                      ],
-                    ),
-                    ...List.generate(6, (slotIndex) {
-                      return TableRow(
-                        children: [
-                          TableCell(
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width < 768 ? 8 : 16
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                _timeSlots[slotIndex],
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontSize: MediaQuery.of(context).size.width < 768 ? 12 : null,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                                ...days.map((day) => TableCell(
+                                      child: Container(
+                                        padding: EdgeInsets.all(
+                                          MediaQuery.of(context).size.width < 768 ? 10 : 20
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: day == today
+                                              ? theme.colorScheme.primary.withOpacity(0.08)
+                                              : Colors.transparent,
+                                          border: day == today
+                                              ? Border(
+                                                  bottom: BorderSide(
+                                                    color: theme.colorScheme.primary,
+                                                    width: 3,
+                                                  ),
+                                                )
+                                              : null,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            if (day == today)
+                                              Icon(Icons.today, color: theme.colorScheme.primary, size: 18),
+                                            if (day == today) const SizedBox(width: 4),
+                                            Text(
+                                              day,
+                                              style: theme.textTheme.titleMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context).size.width < 768 ? 14 : 16,
+                                                color: day == today
+                                                    ? theme.colorScheme.primary
+                                                    : theme.textTheme.titleMedium?.color,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                              ],
                             ),
-                          ),
-                          ...days.map((day) {
-                            final dayEntries = groupedEntries[day] ?? [];
-                            TeacherTimelineEntry? entry;
-                            try {
-                              entry = dayEntries.firstWhere(
-                                (e) =>
-                                    e.startTime ==
-                                    _timeSlots[slotIndex].split(' - ')[0],
+                            ...List.generate(6, (slotIndex) {
+                              return TableRow(
+                                decoration: BoxDecoration(
+                                  color: slotIndex.isEven
+                                      ? theme.colorScheme.surface.withOpacity(0.97)
+                                      : theme.colorScheme.surfaceContainerHighest.withOpacity(0.93),
+                                ),
+                                children: [
+                                  TableCell(
+                                    child: Container(
+                                      padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width < 768 ? 8 : 16
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        _timeSlots[slotIndex],
+                                        style: theme.textTheme.titleSmall?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: MediaQuery.of(context).size.width < 768 ? 12 : 14,
+                                          color: theme.colorScheme.primary.withOpacity(0.85),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  ...days.map((day) {
+                                    final dayEntries = groupedEntries[day] ?? [];
+                                    TeacherTimelineEntry? entry;
+                                    try {
+                                      entry = dayEntries.firstWhere(
+                                        (e) =>
+                                            e.startTime ==
+                                            _timeSlots[slotIndex].split(' - ')[0],
+                                      );
+                                    } catch (_) {
+                                      entry = null;
+                                    }
+                                    return _buildScheduleCell(entry, context);
+                                  }),
+                                ],
                               );
-                            } catch (_) {
-                              entry = null;
-                            }
-                            return _buildScheduleCell(entry, context);
-                          }),
-                        ],
+                            }),
+                          ],
+                        ),
                       );
-                    }),
-                  ],
+                    },
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
