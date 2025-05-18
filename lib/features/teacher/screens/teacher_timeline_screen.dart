@@ -185,7 +185,6 @@ class TeacherTimelineScreen extends ConsumerWidget {
               child: Container(
                 margin: const EdgeInsets.all(8),
                 constraints: BoxConstraints(
-                  minWidth: MediaQuery.of(context).size.width - 32,
                   maxWidth: 1600, // Prevent excessive stretching on large screens
                   minHeight: MediaQuery.of(context).size.height * 0.7,
                 ),
@@ -194,9 +193,9 @@ class TeacherTimelineScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Table(
-                  defaultColumnWidth: const FixedColumnWidth(220), // Increased day column width
+                  defaultColumnWidth: const FixedColumnWidth(240), // Increased column width for better content fit
                   columnWidths: const {
-                    0: FixedColumnWidth(160), // Increased time column width
+                    0: FixedColumnWidth(180), // Increased time column width
                   },
                   border: TableBorder.all(
                     color: theme.dividerColor,
@@ -301,8 +300,8 @@ class TeacherTimelineScreen extends ConsumerWidget {
 
   Widget _buildScheduleCell(TeacherTimelineEntry? entry, BuildContext context) {
     final theme = Theme.of(context);
-    const double cellHeight = 200.0;
-    const double cellPadding = 8.0;
+    const double cellHeight = 220.0; // Increased cell height
+    const double cellPadding = 12.0; // Increased padding
 
     if (entry == null) {
       return TableCell(
@@ -332,13 +331,14 @@ class TeacherTimelineScreen extends ConsumerWidget {
           child: Container(
             height: cellHeight,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 195),
-                  child: Row(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 215),
+                    child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(icon, size: 16, color: baseColor),
@@ -359,9 +359,9 @@ class TeacherTimelineScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 12),
                 ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 195),
+                  constraints: const BoxConstraints(maxWidth: 215),
                   child: Text(
                     entry.groupName,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -374,7 +374,7 @@ class TeacherTimelineScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 SizedBox(
-                  width: 195,
+                  width: 215,
                   child: Center(
                     child: Container(
                       constraints: const BoxConstraints(maxWidth: 120),
@@ -402,7 +402,8 @@ class TeacherTimelineScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -460,12 +461,7 @@ class TeacherTimelineScreen extends ConsumerWidget {
 
   List<String> _getSortedDays(
       Map<String, List<TeacherTimelineEntry>> groupedEntries, List<String> allDays) {
-    final days = groupedEntries.keys.toList();
-    days.sort((a, b) {
-      final aIndex = allDays.indexOf(a);
-      final bIndex = allDays.indexOf(b);
-      return aIndex.compareTo(bIndex);
-    });
-    return days;
+    // Always return all days to ensure complete week display
+    return List.from(allDays);
   }
 }
