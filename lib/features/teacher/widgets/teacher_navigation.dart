@@ -139,7 +139,7 @@ class TeacherNavigation extends StatelessWidget {
               color: isSelected
                   ? colorScheme.primaryContainer
                   : isHovered
-                      ? theme.colorScheme.surfaceVariant.withOpacity(0.5)
+                      ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
                       : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),

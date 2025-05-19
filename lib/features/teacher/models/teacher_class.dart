@@ -85,6 +85,22 @@ class TeacherClass {
     );
   }
 
+  factory TeacherClass.fromClassInfo(ClassInfo info) {
+    return TeacherClass(
+      id: info.id,
+      code: info.code,
+      title: info.title,
+      description: info.description,
+      creditHours: info.creditHours,
+      yearOfStudy: info.yearOfStudy,
+      semester: info.semester,
+      academicPeriod: DateTime.now().year.toString(),
+      groups: info.groups,
+      schedule: info.schedule,
+      type: info.type,
+    );
+  }
+
   static int _extractStudentCount(dynamic countData) {
     if (countData == null) return 0;
 

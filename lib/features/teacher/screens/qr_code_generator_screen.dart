@@ -138,7 +138,7 @@ class _QRCodeGeneratorScreenState extends ConsumerState<QRCodeGeneratorScreen> {
                           });
                         }
                       },
-                      items: [
+                      items: const [
                         DropdownMenuItem(
                           value: ClassType.course,
                           child: Text('CM'),

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course.dart';
+import '../models/teacher_class.dart';
 
 class TeacherClassesService {
   final SupabaseClient _supabaseClient;
@@ -85,20 +86,21 @@ class TeacherClassesService {
         }
       }
 
-      // Convert to ClassInfo objects
+      // Convert to TeacherClass objects
       try {
         print(
-            '[TeacherClassesService] Converting ${courses.length} courses to ClassInfo objects');
+            '[TeacherClassesService] Converting ${courses.length} courses to TeacherClass objects');
         final result = courses.values.map((courseData) {
           print(
               '[TeacherClassesService] Converting course: ${courseData['id']}');
-          return ClassInfo.fromJson({
+          return TeacherClass.fromJson({
             ...courseData,
             'schedule': _generateSchedule(courseData['id']),
+            'type': 'course', // Default type for courses
           });
         }).toList();
         print('[TeacherClassesService] Successfully converted all courses');
-        return result;
+        return result.map((tc) => tc.toClassInfo()).toList();
       } catch (error, stackTrace) {
         print('[TeacherClassesService] Error converting courses: $error');
         print('[TeacherClassesService] Stack trace: $stackTrace');
@@ -131,7 +133,86 @@ class TeacherClassesService {
     }
   }
 
-  // Temporary helper method to generate schedule string
+  // Fetch a single class by ID
+  Future<TeacherClass> getClassById(String classId) async {
+    try {
+      final response = await _supabaseClient.from('courses').select('''
+            *,
+            groups:student_groups (
+              id,
+              name,
+              academic_year,
+              current_year,
+              section,
+              student_count:student_profiles(count)
+            )
+          ''').eq('id', classId).single();
+
+      return TeacherClass.fromJson(response);
+    } catch (error) {
+      throw Exception('Failed to fetch class: $error');
+    }
+  }
+
+  // Create a new class
+  Future<TeacherClass> createClass(TeacherClass teacherClass) async {
+    try {
+      final response = await _supabaseClient
+          .from('courses')
+          .insert({
+            'code': teacherClass.code,
+            'title': teacherClass.title,
+            'description': teacherClass.description,
+            'credit_hours': teacherClass.creditHours,
+            'year_of_study': teacherClass.yearOfStudy,
+            'semester': teacherClass.semester,
+            'academic_period': teacherClass.academicPeriod,
+            'type': teacherClass.type.name,
+          })
+          .select()
+          .single();
+
+      return TeacherClass.fromJson(response);
+    } catch (error) {
+      throw Exception('Failed to create class: $error');
+    }
+  }
+
+  // Update an existing class
+  Future<TeacherClass> updateClass(TeacherClass teacherClass) async {
+    try {
+      final response = await _supabaseClient
+          .from('courses')
+          .update({
+            'code': teacherClass.code,
+            'title': teacherClass.title,
+            'description': teacherClass.description,
+            'credit_hours': teacherClass.creditHours,
+            'year_of_study': teacherClass.yearOfStudy,
+            'semester': teacherClass.semester,
+            'academic_period': teacherClass.academicPeriod,
+            'type': teacherClass.type.name,
+          })
+          .eq('id', teacherClass.id)
+          .select()
+          .single();
+
+      return TeacherClass.fromJson(response);
+    } catch (error) {
+      throw Exception('Failed to update class: $error');
+    }
+  }
+
+  // Delete a class
+  Future<void> deleteClass(String classId) async {
+    try {
+      await _supabaseClient.from('courses').delete().eq('id', classId);
+    } catch (error) {
+      throw Exception('Failed to delete class: $error');
+    }
+  }
+
+  // Helper method to generate schedule string
   // TODO: Replace with actual schedule data from the database
   String _generateSchedule(String courseId) {
     final daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu'];

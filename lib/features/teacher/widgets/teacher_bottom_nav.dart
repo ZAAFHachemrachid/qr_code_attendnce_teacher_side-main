@@ -13,7 +13,7 @@ class TeacherBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Navigation items data
     final items = [
       (Icons.home, 'Home', 'Navigate to Home'),
@@ -106,15 +106,16 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
 
   bool _isWithinIconBounds(Offset localPosition) {
     if (_iconKey.currentContext == null) return false;
-    final RenderBox iconBox = _iconKey.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox iconBox =
+        _iconKey.currentContext!.findRenderObject() as RenderBox;
     final Size iconSize = iconBox.size;
-    
+
     // Use 24x24 hit target while keeping visual size at 18x18
-    final hitTargetSize = 24.0;
+    const hitTargetSize = 24.0;
     return localPosition.dx >= (iconSize.width - hitTargetSize) / 2 &&
-           localPosition.dx <= (iconSize.width + hitTargetSize) / 2 &&
-           localPosition.dy >= (iconSize.height - hitTargetSize) / 2 &&
-           localPosition.dy <= (iconSize.height + hitTargetSize) / 2;
+        localPosition.dx <= (iconSize.width + hitTargetSize) / 2 &&
+        localPosition.dy >= (iconSize.height - hitTargetSize) / 2 &&
+        localPosition.dy <= (iconSize.height + hitTargetSize) / 2;
   }
 
   @override
@@ -138,7 +139,8 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
               child: InkWell(
                 customBorder: const CircleBorder(),
                 onTap: () {
-                  final RenderBox? box = _iconKey.currentContext?.findRenderObject() as RenderBox?;
+                  final RenderBox? box =
+                      _iconKey.currentContext?.findRenderObject() as RenderBox?;
                   if (box != null) {
                     final Offset center = box.size.center(Offset.zero);
                     _isTapWithinBounds = _isWithinIconBounds(center);

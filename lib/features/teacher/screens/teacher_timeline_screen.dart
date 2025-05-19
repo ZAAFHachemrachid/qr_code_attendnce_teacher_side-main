@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_timeline_provider.dart';
 import '../models/timeline_entry.dart';
-import '../../theme/theme_constants.dart';
 
 class TeacherTimelineScreen extends ConsumerWidget {
   const TeacherTimelineScreen({super.key});

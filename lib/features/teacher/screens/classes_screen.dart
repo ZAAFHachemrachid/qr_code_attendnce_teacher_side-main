@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/course.dart';
+import '../providers/academic_period_provider.dart';
 import '../providers/teacher_classes_provider.dart';
 import 'qr_code_generator_screen.dart';
+import '../../../core/widgets/skeleton_container.dart';
 
 class ClassesScreen extends ConsumerWidget {
   const ClassesScreen({super.key});
@@ -31,8 +33,10 @@ class ClassesScreen extends ConsumerWidget {
           _buildPeriodSelector(context, ref, currentPeriod),
           Expanded(
             child: classesAsyncValue.when(
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
+              loading: () => ListView.builder(
+                itemCount: 3,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemBuilder: (context, index) => _buildSkeletonCard(context),
               ),
               error: (error, stackTrace) => Center(
                 child: Column(
@@ -53,7 +57,9 @@ class ClassesScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        ref.read(teacherClassesProvider.notifier).refresh();
+                        ref
+                            .read(teacherClassesProvider.notifier)
+                            .refreshClasses();
                       },
                       child: const Text('Retry'),
                     ),
@@ -62,14 +68,48 @@ class ClassesScreen extends ConsumerWidget {
               ),
               data: (classes) => classes.isEmpty
                   ? Center(
-                      child: Text(
-                        'No classes found for academic year $currentPeriod.\n(No real or dummy classes available)',
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.school_outlined,
+                            size: 64,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No Classes Found',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'No classes available for academic year $currentPeriod',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => ref
+                                .read(teacherClassesProvider.notifier)
+                                .refreshClasses(),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Refresh'),
+                          ),
+                        ],
                       ),
                     )
                   : RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(teacherClassesProvider.notifier).refresh(),
+                      onRefresh: () => ref
+                          .read(teacherClassesProvider.notifier)
+                          .refreshClasses(),
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         itemCount: classes.length,
@@ -131,10 +171,40 @@ class ClassesScreen extends ConsumerWidget {
             }).toList(),
             onChanged: (newPeriod) {
               if (newPeriod != null) {
-                ref.read(academicPeriodProvider.notifier).state = newPeriod;
+                ref.read(currentAcademicPeriodProvider.notifier).state =
+                    newPeriod;
               }
             },
             underline: Container(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SkeletonContainer(width: 200, height: 20),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const SkeletonContainer(width: 100, height: 16),
+              const SizedBox(width: 16),
+              const SkeletonContainer(width: 80, height: 16),
+            ],
           ),
         ],
       ),
@@ -158,38 +228,88 @@ class ClassesScreen extends ConsumerWidget {
               ),
             ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  '${classInfo.code} - ${classInfo.title}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.2,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${classInfo.code} - ${classInfo.title}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              if (ref != null) ...[
-                IconButton(
-                  icon: const Icon(Icons.qr_code, size: 20),
-                  onPressed: () {
-                    final teacherClass =
-                        ref.read(teacherClassesProvider).value?.firstWhere(
+                  if (ref != null) ...[
+                    IconButton(
+                      icon: const Icon(Icons.qr_code, size: 20),
+                      onPressed: () {
+                        final teacherClass = ref
+                            .read(teacherClassesProvider)
+                            .value
+                            ?.firstWhere(
                               (tc) => tc.id == classInfo.id,
                               orElse: () => throw Exception('Class not found'),
                             );
-                    if (teacherClass != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QRCodeGeneratorScreen(
-                            teacherClass: teacherClass,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  visualDensity: VisualDensity.compact,
+                        if (teacherClass != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QRCodeGeneratorScreen(
+                                teacherClass: teacherClass,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Semester ${classInfo.semester}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Icon(
+                    Icons.timer_outlined,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${classInfo.creditHours} Credits',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+              if (classInfo.schedule.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  classInfo.schedule,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ],
@@ -255,6 +375,33 @@ class _ClassDetailScreenState extends ConsumerState<ClassDetailScreen>
     super.dispose();
   }
 
+  Widget _buildDetailRow(IconData icon, String text) {
+    if (text.isEmpty) return const SizedBox.shrink();
+
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color:
+              Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onPrimaryContainer
+                  .withOpacity(0.8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -268,31 +415,60 @@ class _ClassDetailScreenState extends ConsumerState<ClassDetailScreen>
           Container(
             padding: const EdgeInsets.all(16),
             color: Theme.of(context).colorScheme.primaryContainer,
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.classInfo.code,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                Text(
+                  widget.classInfo.title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.people, size: 16),
-                          const SizedBox(width: 4),
-                          Text('${widget.classInfo.students} students'),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.classInfo.code,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onPrimaryContainer
+                            .withOpacity(0.8),
+                      ),
+                ),
+                const SizedBox(height: 16),
+                _buildDetailRow(
+                    Icons.description_outlined, widget.classInfo.description),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDetailRow(Icons.school_outlined,
+                          'Year ${widget.classInfo.yearOfStudy}, Semester ${widget.classInfo.semester}'),
+                    ),
+                    Expanded(
+                      child: _buildDetailRow(Icons.timer_outlined,
+                          '${widget.classInfo.creditHours} Credit Hours'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDetailRow(Icons.groups_outlined,
+                          '${widget.classInfo.students} Students'),
+                    ),
+                    Expanded(
+                      child: _buildDetailRow(Icons.category_outlined,
+                          widget.classInfo.type.name.toUpperCase()),
+                    ),
+                  ],
+                ),
+                if (widget.classInfo.schedule.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildDetailRow(
+                      Icons.calendar_today_outlined, widget.classInfo.schedule),
+                ],
+                const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: () {
                     final teacherClass =
@@ -357,10 +533,18 @@ class _ClassDetailScreenState extends ConsumerState<ClassDetailScreen>
             '$type Groups',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
+          if (type == 'Course')
+            Text(
+              'Master class for ${widget.classInfo.code}',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+            ),
           const SizedBox(height: 16),
           if (groups.isEmpty)
             const Center(

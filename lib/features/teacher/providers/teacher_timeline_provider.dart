@@ -13,7 +13,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
   }
 
   return [
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '1',
       courseName: 'Advanced Software Engineering',
       courseCode: 'CSE401',
@@ -25,7 +25,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 1,
       room: 'Room 301',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '2',
       courseName: 'Advanced Software Engineering',
       courseCode: 'CSE401',
@@ -37,7 +37,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 2,
       room: 'Lab 102',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '3',
       courseName: 'Data Science Fundamentals',
       courseCode: 'DS201',
@@ -49,7 +49,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 4,
       room: 'Room 205',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '4',
       courseName: 'Machine Learning',
       courseCode: 'CSE405',
@@ -61,7 +61,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 3,
       room: 'Room 401',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '5',
       courseName: 'Data Science Fundamentals',
       courseCode: 'DS201',
@@ -73,7 +73,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 5,
       room: 'Lab 103',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '6',
       courseName: 'Machine Learning',
       courseCode: 'CSE405',
@@ -85,7 +85,7 @@ List<TeacherTimelineEntry> _generateDummyTimelineEntries(String teacherId) {
       slotNumber: 1,
       room: 'Room 302',
     ),
-    TeacherTimelineEntry(
+    const TeacherTimelineEntry(
       id: '7',
       courseName: 'Advanced Software Engineering',
       courseCode: 'CSE401',
