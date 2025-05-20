@@ -4,7 +4,9 @@ import 'package:mockito/annotations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:qr_code_attendance/features/teacher/services/teacher_classes_service.dart';
 import 'package:qr_code_attendance/features/teacher/models/teacher_class.dart';
-import 'package:qr_code_attendance/features/teacher/models/course.dart';
+import 'package:qr_code_attendance/features/teacher/models/course.dart'
+    show ClassInfo;
+import 'package:qr_code_attendance/features/teacher/models/class_type.dart';
 
 @GenerateNiceMocks([MockSpec<SupabaseClient>()])
 import 'teacher_classes_service_test.mocks.dart';

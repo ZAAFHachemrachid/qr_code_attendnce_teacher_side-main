@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'models/course.dart';
+import 'models/course.dart' show CourseGroup;
 import 'models/teacher_class.dart';
+import 'models/class_type.dart';
 import 'providers/teacher_profile_provider.dart';
 import 'screens/attendance_screen.dart';
 import 'screens/classes_screen.dart';
@@ -90,6 +91,29 @@ class _TeacherFeatureState extends ConsumerState<TeacherFeature> {
 
 class TeacherDashboard extends ConsumerWidget {
   const TeacherDashboard({super.key});
+
+  TeacherClass get _demoClass => TeacherClass(
+        id: 'demo',
+        code: 'DEMO101',
+        title: 'Demo Class',
+        description: 'Demo class for quick QR generation',
+        creditHours: 3,
+        yearOfStudy: 1,
+        semester: 'current',
+        groups: const [
+          CourseGroup(
+            id: 'demo-group',
+            name: 'Demo Group',
+            academicYear: 2024,
+            currentYear: 1,
+            section: 'A',
+            studentCount: 30,
+          ),
+        ],
+        schedule: 'Demo Schedule',
+        type: ClassType.course,
+        academicPeriod: '2024',
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -203,32 +227,11 @@ class TeacherDashboard extends ConsumerWidget {
                     Icons.qr_code,
                     Colors.green,
                     () {
-                      const demoClass = TeacherClass(
-                        id: 'demo',
-                        code: 'DEMO101',
-                        title: 'Demo Class',
-                        description: 'Demo class for quick QR generation',
-                        creditHours: 3,
-                        yearOfStudy: 1,
-                        semester: 'current',
-                        groups: [
-                          CourseGroup(
-                            id: 'demo-group',
-                            name: 'Demo Group',
-                            academicYear: 2024,
-                            currentYear: 1,
-                            section: 'A',
-                            studentCount: 30,
-                          ),
-                        ],
-                        schedule: 'Demo Schedule',
-                        type: ClassType.course,
-                        academicPeriod: '2024',
-                      );
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (_) => const QRCodeGeneratorScreen(
-                                teacherClass: demoClass)),
+                          builder: (_) =>
+                              QRCodeGeneratorScreen(teacherClass: _demoClass),
+                        ),
                       );
                     },
                   ),

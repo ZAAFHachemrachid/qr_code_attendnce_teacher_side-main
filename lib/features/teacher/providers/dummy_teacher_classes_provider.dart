@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/teacher_class.dart';
-import '../models/course.dart';
+import '../models/course.dart' show CourseGroup;
+import '../models/class_type.dart';
 
 final dummyTeacherClassesProvider = StateNotifierProvider<
     DummyTeacherClassesNotifier, AsyncValue<List<TeacherClass>>>(

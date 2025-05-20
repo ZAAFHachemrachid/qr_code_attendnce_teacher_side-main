@@ -1,4 +1,4 @@
-enum ClassType { course, td, tp }
+import 'class_type.dart';
 
 class ClassInfo {
   final String id;
@@ -40,10 +40,7 @@ class ClassInfo {
           .map((group) => CourseGroup.fromJson(group as Map<String, dynamic>))
           .toList(),
       schedule: json['schedule'] as String,
-      type: ClassType.values.firstWhere(
-        (t) => t.name == (json['type'] as String? ?? 'course'),
-        orElse: () => ClassType.course,
-      ),
+      type: ClassType.fromString(json['type'] as String? ?? 'course'),
     );
   }
 }

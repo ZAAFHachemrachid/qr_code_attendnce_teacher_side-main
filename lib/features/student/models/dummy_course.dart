@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import '../../teacher/models/course.dart';
+import '../../teacher/models/course.dart' show ClassInfo, CourseGroup;
+import '../../teacher/models/class_type.dart';
 import 'session_attendance.dart';
 
 @immutable

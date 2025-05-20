@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/course.dart';
+import '../models/course.dart' show ClassInfo, CourseGroup;
+import '../models/class_type.dart';
 
 final teacherStudentServiceProvider = Provider<TeacherStudentService>((ref) {
   final supabase = Supabase.instance.client;
@@ -50,10 +51,7 @@ class TeacherStudentService {
           semester: course['semester'],
           groups: [group],
           schedule: course['group_courses']['academic_period'],
-          type: ClassType.values.firstWhere(
-            (t) => t.name == (course['type'] ?? 'course'),
-            orElse: () => ClassType.course,
-          ),
+          type: ClassType.fromString(course['type'] ?? 'course'),
         );
       }).toList();
     } catch (e, stack) {

@@ -1,4 +1,5 @@
 enum SessionType {
+  course('CM'),
   td('TD'),
   tp('TP');
 
@@ -8,7 +9,7 @@ enum SessionType {
   static SessionType fromString(String value) {
     return SessionType.values.firstWhere(
       (type) => type.label.toLowerCase() == value.toLowerCase(),
-      orElse: () => SessionType.td,
+      orElse: () => SessionType.course,
     );
   }
 

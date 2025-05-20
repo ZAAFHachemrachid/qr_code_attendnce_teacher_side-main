@@ -1,4 +1,5 @@
-import '../models/course.dart' show CourseGroup, ClassInfo, ClassType;
+import '../models/course.dart' show CourseGroup, ClassInfo;
+import '../models/class_type.dart';
 
 class TeacherClass {
   final String id;
@@ -78,10 +79,7 @@ class TeacherClass {
       yearOfStudy: json['year_of_study'] as int? ?? 1,
       semester: json['semester'] as String? ?? 'current',
       groups: groups,
-      type: ClassType.values.firstWhere(
-        (t) => t.name == (json['type'] as String? ?? 'course'),
-        orElse: () => ClassType.course,
-      ),
+      type: ClassType.fromString(json['type'] as String? ?? 'course'),
     );
   }
 
