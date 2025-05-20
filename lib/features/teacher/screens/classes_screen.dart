@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/course.dart';
 import '../providers/academic_period_provider.dart';
 import '../providers/teacher_classes_provider.dart';
@@ -11,6 +12,9 @@ class ClassesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch initializer to trigger auto-loading
+    ref.watch(classesInitializerProvider);
+
     final classesAsyncValue = ref.watch(teacherClassesProvider);
     final currentPeriod = ref.watch(currentAcademicPeriodProvider);
     final periods = ref.watch(academicPeriodsProvider);
@@ -173,6 +177,14 @@ class ClassesScreen extends ConsumerWidget {
               if (newPeriod != null) {
                 ref.read(currentAcademicPeriodProvider.notifier).state =
                     newPeriod;
+                // Trigger refresh when period changes
+                final userId =
+                    ref.read(authStateProvider).value?.session?.user.id;
+                if (userId != null) {
+                  ref
+                      .read(teacherClassesProvider.notifier)
+                      .loadClasses(userId, newPeriod);
+                }
               }
             },
             underline: Container(),
