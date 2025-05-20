@@ -2,12 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/teacher_class.dart';
 import '../models/course.dart';
 
-final dummyTeacherClassesProvider =
-    StateNotifierProvider<DummyTeacherClassesNotifier, AsyncValue<List<TeacherClass>>>(
+final dummyTeacherClassesProvider = StateNotifierProvider<
+    DummyTeacherClassesNotifier, AsyncValue<List<TeacherClass>>>(
   (ref) => DummyTeacherClassesNotifier(),
 );
 
-class DummyTeacherClassesNotifier extends StateNotifier<AsyncValue<List<TeacherClass>>> {
+class DummyTeacherClassesNotifier
+    extends StateNotifier<AsyncValue<List<TeacherClass>>> {
   static const int maxDummyClasses = 3;
 
   DummyTeacherClassesNotifier() : super(const AsyncValue.loading()) {

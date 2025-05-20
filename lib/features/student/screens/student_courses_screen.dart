@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/student_providers.dart';
-import '../providers/dummy_course_provider.dart';
-import '../widgets/dummy_course_card.dart';
-import '../models/dummy_course.dart';
+import '../providers/student_courses_provider.dart';
+import '../providers/course_attendance_provider.dart';
+import '../widgets/course_card.dart';
+import '../../teacher/models/course.dart';
 import 'course_detail_screen.dart';
 
 class StudentCoursesScreen extends ConsumerWidget {
@@ -11,63 +12,72 @@ class StudentCoursesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final attendanceRecords = ref.watch(filteredAttendanceProvider);
-    final dummyCoursesAsync = ref.watch(dummyCourseProvider);
+    final studentProfileAsync = ref.watch(studentProfileProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Group attendance records by course
-    final courseAttendance = <String, List<dynamic>>{};
-    for (var record in attendanceRecords) {
-      final courseTitle = record.sessionTitle.split(' - ')[0];
-      courseAttendance.putIfAbsent(courseTitle, () => []).add(record);
-    }
-
-    return dummyCoursesAsync.when(
+    return studentProfileAsync.when(
       loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Scaffold(
-        body: Center(
-          child: Text('Error: $error'),
-        ),
+        body: Center(child: Text('Error: $error')),
       ),
-      data: (dummyCourses) => _buildContent(
-        context,
-        ref,
-        theme,
-        isDark,
-        courseAttendance,
-        dummyCourses,
-      ),
-    );
-  }
+      data: (profile) {
+        final coursesAsync = ref.watch(studentCoursesProvider);
 
-  Widget _buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeData theme,
-    bool isDark,
-    Map<String, List<dynamic>> courseAttendance,
-    List<DummyCourse> dummyCourses,
-  ) {
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: const Text('My Courses'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.refresh(studentAttendanceProvider),
+        return Scaffold(
+          backgroundColor: theme.colorScheme.surface,
+          appBar: AppBar(
+            title: const Text('My Courses'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  ref
+                      .refresh(studentCoursesProvider.notifier)
+                      .refreshCourses(profile.groupId);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: courseAttendance.isEmpty && dummyCourses.isNotEmpty
-          ? _buildDummyCourseView(context, dummyCourses.first)
-          : courseAttendance.isEmpty
-              ? Center(
+          body: coursesAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading courses',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString(),
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .refresh(studentCoursesProvider.notifier)
+                          .refreshCourses(profile.groupId);
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+            data: (courses) {
+              if (courses.isEmpty) {
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -83,304 +93,52 @@ class StudentCoursesScreen extends ConsumerWidget {
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Contact your administrator for course assignment',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () =>
-                      ref.refresh(studentAttendanceProvider.future),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: courseAttendance.length,
-                    itemBuilder: (context, index) {
-                      final courseTitle =
-                          courseAttendance.keys.elementAt(index);
-                      final records = courseAttendance[courseTitle]!;
-                      final totalSessions = records.length;
-                      final presentSessions =
-                          records.where((r) => r.status == 'present').length;
-                      final attendanceRate = totalSessions > 0
-                          ? (presentSessions / totalSessions * 100)
-                          : 0.0;
+                );
+              }
 
-                      return _AnimatedCard(
-                        child: Card(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: InkWell(
-                            onTap: () => _showCourseDetails(
-                                context, ref, courseTitle, records),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    theme.colorScheme.primary
-                                        .withOpacity(isDark ? 0.2 : 0.1),
-                                    theme.colorScheme.primary
-                                        .withOpacity(isDark ? 0.1 : 0.05),
-                                  ],
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.book,
-                                          color: theme.colorScheme.primary,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            courseTitle,
-                                            style: theme.textTheme.titleLarge
-                                                ?.copyWith(
-                                              color:
-                                                  theme.colorScheme.onSurface,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        _buildStat(
-                                          context,
-                                          'Total Sessions',
-                                          totalSessions.toString(),
-                                          theme.colorScheme.primary,
-                                        ),
-                                        _buildStat(
-                                          context,
-                                          'Present',
-                                          presentSessions.toString(),
-                                          theme.colorScheme.secondary,
-                                        ),
-                                        _buildStat(
-                                          context,
-                                          'Attendance',
-                                          '${attendanceRate.toStringAsFixed(1)}%',
-                                          theme.colorScheme.tertiary,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    TweenAnimationBuilder<double>(
-                                      tween: Tween(
-                                          begin: 0, end: attendanceRate / 100),
-                                      duration:
-                                          const Duration(milliseconds: 1500),
-                                      builder: (context, value, _) => ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: LinearProgressIndicator(
-                                          value: value,
-                                          backgroundColor: theme.colorScheme
-                                              .surfaceContainerHighest,
-                                          color: theme.colorScheme.primary,
-                                          minHeight: 8,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .refresh(studentCoursesProvider.notifier)
+                      .refreshCourses(profile.groupId);
+                },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    final course = courses[index];
+                    final attendanceStatsAsync =
+                        ref.watch(courseAttendanceStatsProvider(course.id));
+
+                    return _AnimatedCard(
+                      child: CourseCard(
+                        course: course,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CourseDetailScreen(course: course),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-    );
-  }
-
-  Widget _buildStat(
-    BuildContext context,
-    String label,
-    String value,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-        ),
-      ],
-    );
-  }
-
-  void _showCourseDetails(
-    BuildContext context,
-    WidgetRef ref,
-    String courseTitle,
-    List<dynamic> records,
-  ) {
-    // Check if this is a dummy course
-    final dummyCourses = ref.read(dummyCourseProvider).value;
-    DummyCourse? dummyCourse;
-
-    if (dummyCourses != null) {
-      try {
-        dummyCourse = dummyCourses.firstWhere(
-          (course) => course.title == courseTitle,
-        );
-      } catch (_) {
-        // Not found in dummy courses
-      }
-    }
-
-    if (dummyCourse != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CourseDetailScreen(course: dummyCourse!),
-        ),
-      );
-      return;
-    }
-
-    // Show real course details in bottom sheet
-    final theme = Theme.of(context);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: theme.colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.book,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      courseTitle,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: records.length,
-                itemBuilder: (context, index) {
-                  final record = records[index];
-                  return _AnimatedCard(
-                    child: Card(
-                      child: ListTile(
-                        leading: _buildStatusIcon(context, record.status),
-                        title: Text(record.sessionTitle),
-                        subtitle: Text(
-                          '${record.sessionDate.toString().split(' ')[0]}\n'
-                          '${record.startTime} - ${record.endTime}',
-                        ),
-                        trailing: _buildStatusChip(context, record.status),
-                        isThreeLine: true,
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusIcon(BuildContext context, String status) {
-    final theme = Theme.of(context);
-    IconData icon;
-    Color color;
-
-    switch (status.toLowerCase()) {
-      case 'present':
-        icon = Icons.check_circle;
-        color = theme.colorScheme.secondary;
-        break;
-      case 'absent':
-        icon = Icons.cancel;
-        color = theme.colorScheme.error;
-        break;
-      case 'late':
-        icon = Icons.watch_later;
-        color = theme.colorScheme.tertiary;
-        break;
-      default:
-        icon = Icons.help;
-        color = theme.colorScheme.onSurfaceVariant;
-    }
-
-    return Icon(icon, color: color);
-  }
-
-  Widget _buildStatusChip(BuildContext context, String status) {
-    final theme = Theme.of(context);
-    Color color;
-    IconData icon;
-
-    switch (status.toLowerCase()) {
-      case 'present':
-        color = theme.colorScheme.secondary;
-        icon = Icons.check_circle;
-        break;
-      case 'absent':
-        color = theme.colorScheme.error;
-        icon = Icons.cancel;
-        break;
-      case 'late':
-        color = theme.colorScheme.tertiary;
-        icon = Icons.watch_later;
-        break;
-      default:
-        color = theme.colorScheme.onSurfaceVariant;
-        icon = Icons.help;
-    }
-
-    return Chip(
-      avatar: Icon(icon, color: theme.colorScheme.surface, size: 16),
-      label: Text(
-        status,
-        style: TextStyle(color: theme.colorScheme.surface),
-      ),
-      backgroundColor: color,
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -392,43 +150,6 @@ class _AnimatedCard extends StatefulWidget {
 
   @override
   State<_AnimatedCard> createState() => _AnimatedCardState();
-}
-
-extension on StudentCoursesScreen {
-  Widget _buildDummyCourseView(BuildContext context, DummyCourse course) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.school_outlined,
-              size: 64,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Welcome to Your Course Dashboard',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseDetailScreen(course: course),
-                ),
-              ),
-              child: DummyCourseCard(course: course),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _AnimatedCardState extends State<_AnimatedCard>

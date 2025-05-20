@@ -1,48 +1,69 @@
 import 'package:flutter/material.dart';
-import '../models/dummy_course.dart';
+import '../../teacher/models/course.dart';
 
 class CourseCard extends StatelessWidget {
-  final DummyCourse course;
-  final VoidCallback onTap;
+  final ClassInfo course;
+  final VoidCallback? onTap;
 
   const CourseCard({
     super.key,
     required this.course,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
+      margin: const EdgeInsets.all(8.0),
       child: InkWell(
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.book_outlined,
-                color: Colors.blue,
-                size: 28,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                course.title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    course.code,
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '${course.creditHours} Credits',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                course.title,
+                style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 4),
               Text(
-                course.code,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                course.description,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Schedule: ${course.schedule}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Text(
+                    'Students: ${course.students}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
               ),
             ],
           ),

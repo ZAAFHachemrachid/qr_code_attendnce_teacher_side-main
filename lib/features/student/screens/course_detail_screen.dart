@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/custom_tab_bar.dart';
 import '../../../features/theme/theme_constants.dart';
-import '../models/dummy_course.dart';
 import '../models/session_attendance.dart';
+import '../providers/course_attendance_provider.dart';
 import '../widgets/attendance_section.dart';
+import '../../teacher/models/course.dart';
 
-class CourseDetailScreen extends StatelessWidget {
-  final DummyCourse course;
+class CourseDetailScreen extends ConsumerWidget {
+  final ClassInfo course;
 
   const CourseDetailScreen({
     super.key,
     required this.course,
   });
 
-  String get _roomNumber {
-    if (course.courseAttendance.isNotEmpty) {
-      return course.courseAttendance.first.roomNumber;
-    }
-    return 'Not assigned';
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -30,14 +25,18 @@ class CourseDetailScreen extends StatelessWidget {
           centerTitle: true,
           bottom: CustomTabBar(
             tabs: const ['Overview', 'Attendance', 'Sessions'],
-            icons: const [Icons.info_outline, Icons.bar_chart, Icons.calendar_today],
+            icons: const [
+              Icons.info_outline,
+              Icons.bar_chart,
+              Icons.calendar_today
+            ],
           ),
         ),
         body: TabBarView(
           children: [
             _buildOverviewTab(context),
-            _buildAttendanceTab(context),
-            _buildSessionsTab(context),
+            _buildAttendanceTab(context, ref),
+            _buildSessionsTab(context, ref),
           ],
         ),
       ),
@@ -93,9 +92,9 @@ class CourseDetailScreen extends StatelessWidget {
                 children: [
                   _buildInfoRow(
                     context,
-                    Icons.person,
-                    'Professor',
-                    (course.groups.first as DummyGroup).professor,
+                    Icons.groups,
+                    'Students',
+                    course.students.toString(),
                   ),
                   const Divider(height: 24),
                   _buildInfoRow(
@@ -107,16 +106,16 @@ class CourseDetailScreen extends StatelessWidget {
                   const Divider(height: 24),
                   _buildInfoRow(
                     context,
-                    Icons.meeting_room,
-                    'Room',
-                    _roomNumber,
+                    Icons.book,
+                    'Credit Hours',
+                    '${course.creditHours} Credits',
                   ),
                   const Divider(height: 24),
                   _buildInfoRow(
                     context,
                     Icons.calendar_today,
                     'Term',
-                    '${course.semester} ${course.yearOfStudy}',
+                    '${course.semester} Year ${course.yearOfStudy}',
                   ),
                 ],
               ),
@@ -127,7 +126,9 @@ class CourseDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAttendanceTab(BuildContext context) {
+  Widget _buildAttendanceTab(BuildContext context, WidgetRef ref) {
+    final stats = ref.watch(courseAttendanceStatsProvider(course.id));
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacing),
       child: Column(
@@ -142,52 +143,77 @@ class CourseDetailScreen extends StatelessWidget {
           const SizedBox(height: AppTheme.spacing),
           AttendanceSection(
             title: 'Course Sessions',
-            sessions: course.courseAttendance,
-            attendedCount: course.getAttendanceCount(SessionType.course),
-            totalSessions: course.getTotalSessions(SessionType.course),
-            attendancePercentage:
-                course.getAttendancePercentage(SessionType.course),
+            sessions: [], // Will be updated with real data
+            attendedCount: stats[SessionType.course]?.attended ?? 0,
+            totalSessions: stats[SessionType.course]?.total ?? 0,
+            attendancePercentage: stats[SessionType.course]?.percentage ?? 0,
           ),
           const SizedBox(height: AppTheme.spacing),
           AttendanceSection(
             title: 'TD Sessions',
-            sessions: course.tdAttendance,
-            attendedCount: course.getAttendanceCount(SessionType.td),
-            totalSessions: course.getTotalSessions(SessionType.td),
-            attendancePercentage:
-                course.getAttendancePercentage(SessionType.td),
+            sessions: [], // Will be updated with real data
+            attendedCount: stats[SessionType.td]?.attended ?? 0,
+            totalSessions: stats[SessionType.td]?.total ?? 0,
+            attendancePercentage: stats[SessionType.td]?.percentage ?? 0,
           ),
           const SizedBox(height: AppTheme.spacing),
           AttendanceSection(
             title: 'TP Sessions',
-            sessions: course.tpAttendance,
-            attendedCount: course.getAttendanceCount(SessionType.tp),
-            totalSessions: course.getTotalSessions(SessionType.tp),
-            attendancePercentage:
-                course.getAttendancePercentage(SessionType.tp),
+            sessions: [], // Will be updated with real data
+            attendedCount: stats[SessionType.tp]?.attended ?? 0,
+            totalSessions: stats[SessionType.tp]?.total ?? 0,
+            attendancePercentage: stats[SessionType.tp]?.percentage ?? 0,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSessionsTab(BuildContext context) {
+  Widget _buildSessionsTab(BuildContext context, WidgetRef ref) {
+    final attendanceAsync = ref.watch(courseAttendanceProvider(course.id));
+
     return DefaultTabController(
       length: 3,
       child: Column(
         children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
-            child: const CustomTabBar(
-              tabs: ['Course', 'TD', 'TP'],
+            child: CustomTabBar(
+              tabs: const ['Course', 'TD', 'TP'],
             ),
           ),
           Expanded(
             child: TabBarView(
               children: [
-                _buildSessionList(context, course.courseAttendance),
-                _buildSessionList(context, course.tdAttendance),
-                _buildSessionList(context, course.tpAttendance),
+                attendanceAsync.when(
+                  data: (sessions) => _buildSessionList(
+                    context,
+                    sessions
+                        .where((s) => s.type == SessionType.course)
+                        .toList(),
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(child: Text('Error: $e')),
+                ),
+                attendanceAsync.when(
+                  data: (sessions) => _buildSessionList(
+                    context,
+                    sessions.where((s) => s.type == SessionType.td).toList(),
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(child: Text('Error: $e')),
+                ),
+                attendanceAsync.when(
+                  data: (sessions) => _buildSessionList(
+                    context,
+                    sessions.where((s) => s.type == SessionType.tp).toList(),
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(child: Text('Error: $e')),
+                ),
               ],
             ),
           ),
@@ -198,6 +224,12 @@ class CourseDetailScreen extends StatelessWidget {
 
   Widget _buildSessionList(
       BuildContext context, List<SessionAttendance> sessions) {
+    if (sessions.isEmpty) {
+      return const Center(
+        child: Text('No sessions found'),
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(AppTheme.spacing),
       itemCount: sessions.length,
@@ -263,7 +295,11 @@ class CourseDetailScreen extends StatelessWidget {
   }
 
   Widget _buildInfoRow(
-      BuildContext context, IconData icon, String label, String value) {
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Row(
       children: [
         Container(

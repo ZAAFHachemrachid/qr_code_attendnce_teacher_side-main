@@ -1,30 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../teacher/models/course.dart';
+import '../../teacher/services/teacher_student_service.dart';
 
 final studentCoursesProvider =
     StateNotifierProvider<StudentCoursesNotifier, AsyncValue<List<ClassInfo>>>(
         (ref) {
-  return StudentCoursesNotifier();
+  final teacherStudentService = ref.watch(teacherStudentServiceProvider);
+  return StudentCoursesNotifier(teacherStudentService);
 });
 
 class StudentCoursesNotifier
     extends StateNotifier<AsyncValue<List<ClassInfo>>> {
-  StudentCoursesNotifier() : super(const AsyncValue.loading());
+  final TeacherStudentService _teacherStudentService;
+
+  StudentCoursesNotifier(this._teacherStudentService)
+      : super(const AsyncValue.loading());
 
   Future<bool> hasValidCourses(String? groupId) async {
     if (groupId == null) return false;
 
-    final courses = await _fetchCoursesForGroup(groupId);
-    return courses.isNotEmpty;
+    try {
+      final courses = await _teacherStudentService.fetchStudentCourses(groupId);
+      return courses.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<List<ClassInfo>> _fetchCoursesForGroup(String groupId) async {
     try {
-      // TODO: Implement actual API call to fetch courses
-      // This is a placeholder implementation
-      await Future.delayed(const Duration(seconds: 1));
-      return [];
+      return await _teacherStudentService.fetchStudentCourses(groupId);
     } catch (e) {
+      // Log error here if needed
       return [];
     }
   }
@@ -37,10 +44,10 @@ class StudentCoursesNotifier
 
     try {
       state = const AsyncValue.loading();
-      final courses = await _fetchCoursesForGroup(groupId);
+      final courses = await _teacherStudentService.fetchStudentCourses(groupId);
       state = AsyncValue.data(courses);
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
   }
 }

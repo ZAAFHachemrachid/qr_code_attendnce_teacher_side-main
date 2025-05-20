@@ -1,70 +1,87 @@
 import 'package:flutter/material.dart';
-import '../widgets/dummy_course_card.dart';
-import '../models/dummy_course.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../widgets/course_card.dart';
+import '../providers/student_courses_provider.dart';
+import '../providers/student_providers.dart';
 
-class CourseListScreen extends StatelessWidget {
+class CourseListScreen extends ConsumerWidget {
   const CourseListScreen({super.key});
 
-  List<DummyCourse> _generateDummyCourses() {
-    const studentId = "12345";
-    const academicYear = 2024;
-    const semester = "Spring";
-
-    return [
-      DummyCourse.create(
-        studentId: studentId,
-        academicYear: academicYear,
-        semester: semester,
-        index: 0,
-      ),
-      DummyCourse.create(
-        studentId: studentId,
-        academicYear: academicYear,
-        semester: semester,
-        index: 1,
-      ),
-      DummyCourse.create(
-        studentId: studentId,
-        academicYear: academicYear,
-        semester: semester,
-        index: 2,
-      ),
-      DummyCourse.create(
-        studentId: studentId,
-        academicYear: academicYear,
-        semester: semester,
-        index: 3,
-      ),
-    ];
-  }
-
   @override
-  Widget build(BuildContext context) {
-    final courses = _generateDummyCourses();
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch student profile to get groupId
+    final studentProfileAsync = ref.watch(studentProfileProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Courses'),
-        elevation: 0,
+    return studentProfileAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: courses.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/course-detail',
-                arguments: courses[index],
+      error: (error, stack) => Scaffold(
+        body: Center(child: Text('Error: $error')),
+      ),
+      data: (profile) {
+        // Watch courses using student's groupId
+        final coursesAsync = ref.watch(studentCoursesProvider);
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('My Courses'),
+            elevation: 0,
+          ),
+          body: coursesAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: $error'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(studentCoursesProvider.notifier)
+                          .refreshCourses(profile.groupId);
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+            data: (courses) {
+              if (courses.isEmpty) {
+                return const Center(
+                  child: Text('No courses found. Contact your administrator.'),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .read(studentCoursesProvider.notifier)
+                      .refreshCourses(profile.groupId);
+                },
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    final course = courses[index];
+                    return CourseCard(
+                      course: course,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/course-detail',
+                          arguments: course,
+                        );
+                      },
+                    );
+                  },
+                ),
               );
             },
-            child: DummyCourseCard(
-              course: courses[index],
-            ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

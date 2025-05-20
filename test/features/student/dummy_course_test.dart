@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:qr_code_attendance/features/student/models/dummy_course.dart';
 import 'package:qr_code_attendance/features/student/models/student_profile.dart';
@@ -8,8 +10,28 @@ import 'package:qr_code_attendance/features/student/providers/dummy_course_provi
 import 'package:qr_code_attendance/features/student/providers/student_courses_provider.dart';
 import 'package:qr_code_attendance/features/student/providers/student_providers.dart';
 import 'package:qr_code_attendance/features/student/widgets/dummy_course_card.dart';
+import 'package:qr_code_attendance/features/teacher/services/teacher_student_service.dart';
+import 'package:qr_code_attendance/features/teacher/models/course.dart';
+
+class MockSupabaseClient extends Mock implements SupabaseClient {}
+
+class MockTeacherStudentService extends TeacherStudentService {
+  MockTeacherStudentService() : super(MockSupabaseClient());
+
+  @override
+  Future<List<ClassInfo>> fetchStudentCourses(String groupId) async {
+    return []; // Return empty list to trigger dummy course creation
+  }
+
+  @override
+  Future<CourseGroup?> fetchStudentGroup(String groupId) async {
+    return null;
+  }
+}
 
 class MockStudentCoursesNotifier extends StudentCoursesNotifier {
+  MockStudentCoursesNotifier() : super(MockTeacherStudentService());
+
   @override
   Future<bool> hasValidCourses(String? groupId) async {
     return false; // Always return false to trigger dummy course creation
@@ -72,6 +94,8 @@ void main() {
               ),
             ),
           ),
+          teacherStudentServiceProvider
+              .overrideWithValue(MockTeacherStudentService()),
           studentCoursesProvider
               .overrideWith((ref) => MockStudentCoursesNotifier()),
         ],
