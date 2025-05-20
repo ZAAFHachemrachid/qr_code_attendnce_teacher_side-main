@@ -1,6 +1,7 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage{fontspec}
 \usepackage{setspace}
+\usepackage{needspace}
 \setmainfont{Times New Roman}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2.5cm]{geometry}
@@ -24,6 +25,10 @@
 \usepackage{geometry}
 \usepackage{float}
 \usepackage{titlesec}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}
+  {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \usepackage{lipsum}
 \usepackage{hyperref}
 \usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]
