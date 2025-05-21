@@ -1,13 +1,13 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage{fontspec}
 \usepackage{setspace}
-\usepackage{needspace}
 \setmainfont{Times New Roman}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{setspace}
+\usepackage{needspace}
 \usepackage{framed}
 \usepackage{titlesec}
 \usepackage{titling}
@@ -25,16 +25,9 @@
 \usepackage{geometry}
 \usepackage{float}
 \usepackage{titlesec}
-\titleformat{\subsection}
-  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
-\titlespacing*{\subsection}
-  {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \usepackage{lipsum}
 \usepackage{hyperref}
 \usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]
-%\renewcommand{\contentsname}{}
-%\renewcommand{\refname}{}
-%\renewcommand{\bibname}{}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -141,22 +134,24 @@
 
 
 \begin{Summary}
-The implementation of a QR-based attendance tracking application within academic institutions has emerged as a critical necessity for optimizing educational administrative workflows. This QR Code attendence application delivers robust and comprehensive solutions for faculty and administration staff, permitting seamless real-time presence verification without reliance on conventional paper documentation methods.
+Using a QR-based attendance app in schools and universities has become a practical way to streamline how attendance is managed. This kind of system offers a solid, all-in-one solution for teachers, making it easy to check if students are present without needing paper forms or manual tracking.
 
-Additionally, these systems provide instructors with instant access to precise and current attendance data and student participation metrics. The successful deployment of efficient attendance tracking mechanisms necessitates integration of contemporary technological components, including secure centralized data repositories, intuitive mobile interfaces, and reliable QR code functionality, ensuring reliability, operational streamlining, and prevention of fraudulent entries.
+It gives teachers quick access to up-to-date attendance records and insights into student participation. For the system to run smoothly and securely, it relies on modern tech like centralized data storage, easy-to-use mobile apps, and dependable QR code scanning. These features help prevent fraud and make the whole process more efficient.
 
-This initiative focuses on developing and deploying a sophisticated mobile platform that resolves traditional attendance monitoring limitations, enabling student participation verification through straightforward QR code scanning procedures. The application incorporates sophisticated analytical tools customized to specific academic departmental requirements, resulting in significant improvements to instructional efficiency and reduction of administrative overhead. Additionally, it strengthens educational outcomes and encourages student accountability by establishing transparent mechanisms for monitoring classroom engagement and participation rates.
+The goal of this project is to build and roll out a smart mobile app that solves the usual problems with traditional attendance tracking. With a simple QR scan, students can check in, and the system takes care of the rest. The app also includes advanced analytics tools that can be tailored to the needs of different departments, helping improve teaching efficiency and cut down on admin work.
+
+On top of that, it supports better learning outcomes and helps keep students accountable by making it easier to track who’s really showing up and taking part in class.
 \end{Summary}
 
 
 \newpage
-\newenvironment{ملخص}{
+\newenvironment{Résumé}{
     \newpage
     \phantomsection
-    \addcontentsline{toc}{chapter}{ملخص}
+    \addcontentsline{toc}{chapter}{Résumé}
     \begin{center}
         {\color{mintgreen} \rule{\textwidth}{2pt} }\\[0.3cm]
-        {\Large \textbf{الملخص}}\\[0.3cm]
+        {\Large \textbf{Résumé}}\\[0.3cm]
         {\color{mintgreen} \rule{0.8\textwidth}{1.5pt} }
     \end{center}
     \vspace{0.5cm}
@@ -168,13 +163,15 @@ This initiative focuses on developing and deploying a sophisticated mobile platf
         {\color{mintgreen} \rule{\textwidth}{2pt} }
     \end{center}
 }
+\begin{Résumé}
+Mettre en place une application de suivi de présence par QR code dans les établissements scolaires ou universitaires est devenu essentiel pour améliorer la gestion administrative. Ce type d’outil offre une solution fiable et complète aux enseignants, en permettant de vérifier la présence des étudiants en temps réel, sans avoir à utiliser des feuilles papier.
 
-\begin{ملخص}
-أصبح تنفيذ تطبيق لتتبع الحضور باستخدام رمز الاستجابة السريعة (QR) داخل المؤسسات الأكاديمية ضرورة ملحة لتحسين سير العمل الإداري في العملية التعليمية. يوفر هذا التطبيق حلاً شاملاً وفعالاً للأساتذة، مما يسمح بالتحقق الفوري من الحضور دون الاعتماد على الطرق التقليدية الورقية.
-تيح هذا النظام للمدرسين الوصول الفوري إلى بيانات دقيقة ومحدّثة حول الحضور ومعدلات مشاركة الطلبة، مما يسهم في تحسين تنظيم العملية التعليمية واتخاذ القرارات بشكل أسرع وأكثر فعالية. ويتطلب تنفيذ نظام تتبع حضور ناجح دمج تقنيات حديثة، مثل قواعد البيانات المركزية الآمنة، وواجهات الاستخدام السهلة على الهواتف الذكية، ووظائف قراءة رموز QR الموثوقة، لضمان الكفاءة، والسرعة، والحد من محاولات التلاعب.
+Les enseignants peuvent ainsi accéder immédiatement à des données précises sur la présence et la participation des élèves. Pour que ce système fonctionne efficacement, il faut intégrer des technologies modernes comme des bases de données centralisées et sécurisées, des interfaces mobiles simples à utiliser, et un système de scan QR fiable. Tout cela permet de gagner du temps, d’éviter les erreurs, et de limiter les tentatives de fraude.
 
-يركّز هذا المشروع على تطوير ونشر منصة محمولة متقدمة تعالج القيود التقليدية لأنظمة تتبع الحضور، من خلال تمكين الطلبة من تأكيد حضورهم ببساطة عبر مسح رمز الاستجابة السريعة. كما يدمج التطبيق أدوات تحليل ذكية تلبي احتياجات الأقسام الأكاديمية المختلفة، مما يؤدي إلى تحسين كفاءة التدريس وتقليل الأعباء الإدارية. إضافة إلى ذلك، يساهم في تحسين النتائج التعليمية وتعزيز انضباط الطلبة من خلال توفير آليات شفافة لرصد المشاركة والتفاعل داخل الصف.
-\end{ملخص}
+Ce projet a pour but de créer et de lancer une application mobile avancée qui corrige les faiblesses des méthodes classiques de pointage. Grâce à un simple scan de QR code, les étudiants peuvent valider leur présence, et le système fait le reste. L’application inclut aussi des outils d’analyse adaptés aux besoins spécifiques de chaque département, ce qui aide à améliorer l’organisation des cours et à alléger les tâches administratives.
+
+Elle contribue aussi à de meilleurs résultats scolaires et pousse les étudiants à être plus responsables, en mettant en place un suivi clair de leur participation et de leur engagement en classe.
+\end{Résumé}
 
 
 
@@ -200,19 +197,20 @@ This initiative focuses on developing and deploying a sophisticated mobile platf
 }
 
 \begin{Acknowledgment}
-We begin by expressing our sincere gratitude to God, the Almighty, "Allah", whose strength and guidance have made it possible for us to complete this work.
+First and foremost, we’re truly grateful to God, the Almighty—Allah—for giving us the strength and guidance to see this project through to the end.
 
-We would like to convey our deepest appreciation to the leadership of Ahmed Draia University of Adrar, and to the Faculty of Materials Science, Mathematics, and Computer Science, as well as the Department of Mathematics and Computer Science, for their unwavering support and dedication to academic excellence.
+We’d like to sincerely thank the leadership of Ahmed Draia University of Adrar, along with the Faculty of Materials Science, Mathematics, and Computer Science, and the Department of Mathematics and Computer Science, for their constant support and commitment to academic growth.
 
-Our heartfelt thanks go to our supervisor, Dr. Lmteneche Sami, for her exceptional mentorship and continuous encouragement throughout this endeavor.
+A special thank you goes to our supervisor, Dr. Lmteneche Sami, for her outstanding guidance and encouragement every step of the way.
 
-We also want to acknowledge all the professors who have contributed to our intellectual development through their valuable advice and guidance over the past three years.
+We’re also thankful to all the professors who’ve shared their knowledge and advice with us over the past three years—they’ve played a big role in shaping our journey.
 
-Lastly, we wish to thank everyone, whether directly or indirectly involved, for their essential role in the successful completion of this project. Your support has been invaluable to us.
+And finally, thanks to everyone who supported us, directly or behind the scenes. Your help made this project possible.
 \end{Acknowledgment}
 
 
 \newpage
+\addcontentsline{toc}{chapter}{Contents}
 \tableofcontents
 \newpage 
 
@@ -262,9 +260,9 @@ Lastly, we wish to thank everyone, whether directly or indirectly involved, for 
 
 \section{Introduction}
 
-\indent In recent decades, the world has witnessed tremendous advancements in technology and communication, leading to fundamental changes across various sectors, including education. Today, educational institutions are required to leverage modern technologies to enhance their performance and streamline both administrative and academic processes. Among these essential tasks is tracking students' attendance, which serves as a key indicator of their commitment and engagement with their studies.
+\indent Over the past few decades, technology and communication have come a long way, bringing big changes to just about every field—including education. These days, schools and universities are expected to make the most of modern tools to improve how they operate, both on the admin side and in the classroom. One of the key areas where this really matters is tracking student attendance, which says a lot about how engaged and committed students are.
 
-Despite its importance, many educational institutions still rely on traditional attendance methods such as manual name recording or paper-based sign-in sheets. These methods are time-consuming and prone to human errors or manipulation. With the increasing number of students and the diversity of academic programs, it has become essential to develop digital solutions that expedite this process and improve its accuracy. In this context, the use of QR (Quick Response) Code technology has emerged as an innovative solution, allowing students to register their attendance by simply scanning a unique code with their smartphones. This not only saves time but also ensures the accuracy of attendance data, thereby contributing to the overall efficiency of the educational process.
+Even though attendance is so important, a lot of schools still use old-school methods like calling out names or having students sign in on paper. These approaches take up time and can easily lead to mistakes—or even be misused. As student numbers grow and programs become more varied, there's a real need for faster, more reliable ways to handle attendance. That’s where QR code technology comes in. By letting students scan a code with their phones to mark themselves present, this system makes the whole process quicker and more accurate. It’s a simple change that can make a big difference in how efficiently schools run.
 
 \section{Problem Statement}
 As student numbers grow and academic activities diversify, traditional attendance methods have become a burden for both teachers and administrators. Manually verifying each student's presence requires significant time, reducing the time available for instructional activities. Additionally, paper-based attendance records can be lost or damaged, and data manipulation is possible, such as students signing in on behalf of absent classmates. Manually collecting and analyzing attendance data also requires considerable effort and may delay the issuance of essential administrative reports.
@@ -430,7 +428,7 @@ This work not only supports the ongoing digital transformation in the education 
     bottom=6pt
 ]
     \centering
-    \Large \textbf{Section 1 : General Concepts} % ← manual label
+    \Large \textbf{Section 1 : General Concepts}
 \end{tcolorbox}
 
 \phantomsection
@@ -465,19 +463,21 @@ These models influence the choice of modeling tools. For this project, we opted 
 
 
 \subsection{Definition of UML (Unified Modeling Language)}
-The Unified Modeling Language (UML) is a standardized graphical language used for modeling software systems. It offers a set of standardized notations allowing visual representation of different views of a system: static structure, dynamic behavior, interactions, use cases, etc.
-Initially designed by Grady Booch, James Rumbaugh, and Ivar Jacobson (often referred to as "the Three Amigos") at Rational Software in the mid-1990s, UML was standardized by the OMG (Object Management Group) in 1997~\cite{omg2017}. UML emerged as a unification of several object-oriented modeling approaches that were prevalent during that period, creating a common visual language for software developers worldwide~\cite{pressman2014}.
-UML version 2.5.1, released in 2017, includes 14 types of diagrams divided into three major categories:
+
+The Unified Modeling Language (UML) is a standardized graphical language for modeling software systems, representing their structure, behavior, and interactions. Developed in the mid-1990s by Grady Booch, James Rumbaugh, and Ivar Jacobson—known as "the Three Amigos"—it was standardized by the Object Management Group (OMG) in 1997~\cite{omg2017}, unifying several object-oriented modeling methods~\cite{pressman2014}. Version 2.5.1 (2017) defines 14 diagram types in three main categories:
 \begin{itemize}
 \item Structural diagrams (e.g., class diagram, component diagram, object diagram, package diagram, deployment diagram, composite structure diagram, profile diagram),
 \item Behavioral diagrams (e.g., activity diagram, state diagram, use case diagram),
 \item Interaction diagrams (e.g., sequence diagram, communication diagram, timing diagram, interaction overview diagram).
 \end{itemize}
-Each diagram type serves a specific purpose in the software development lifecycle. For instance, class diagrams represent the static structure of a system by showing classes, their attributes, methods, and relationships, while sequence diagrams illustrate the dynamic interactions between objects over time~\cite{sommerville2015}. This multi-perspective approach enables comprehensive modeling of complex software systems from different viewpoints.
-UML promotes shared understanding among stakeholders (developers, analysts, clients, etc.) and improves system documentation~\cite{omg2017}. As noted by Sommerville, "UML has become the standard language for describing and documenting object-oriented systems"~\cite{sommerville2015}. Its widespread adoption across the software industry has established it as a lingua franca for software architects and developers.
-The flexibility of UML allows it to be used in various software development methodologies, from traditional plan-driven approaches to agile methods. In agile contexts, lightweight UML modeling often focuses on select diagram types to communicate essential system aspects without excessive documentation overhead~\cite{pressman2014}. Conversely, in more formal development environments, UML can be applied rigorously to produce detailed system specifications.
-Beyond its core diagramming capabilities, UML also supports model-driven development through the Object Constraint Language (OCL) and various profile extensions that adapt UML to specific domains or platforms. These extensions enhance UML's utility across diverse application domains, including real-time systems, web applications, and enterprise software~\cite{omg2017}.
-Despite criticisms regarding its complexity and learning curve, UML remains a cornerstone of software engineering education and practice, providing a standardized visual vocabulary that transcends programming languages and implementation technologies~\cite{sommerville2015}.
+Each UML diagram plays a specific role in the software development lifecycle; for instance, class diagrams show a system’s static structure, while sequence diagrams illustrate dynamic interactions~\cite{sommerville2015}. This multi-view modeling aids in comprehending complex systems.
+
+UML enhances communication among developers, analysts, and clients, and improves documentation~\cite{omg2017}. As Sommerville states, "UML has become the standard language for describing and documenting object-oriented systems"~\cite{sommerville2015}.
+
+Its flexibility suits both plan-driven and agile methods, with lightweight UML used in agile for essential communication, and detailed modeling in formal processes~\cite{pressman2014}. UML also includes the Object Constraint Language (OCL) and profiles to support diverse domains like real-time and enterprise systems~\cite{omg2017}.
+
+Despite its complexity, UML remains a core tool in software engineering, providing a standardized visual language across languages and platforms~\cite{sommerville2015}.
+
 
 \vspace{3cm}
 
@@ -550,10 +550,12 @@ The class diagram is a structural diagram that describes the system's object cla
 \end{itemize}
 
 
+
+
 \begin{table}[H]
 \centering
-\small % Smaller text size for better fit
-\caption{Explanation of Classes in the Class Diagram}
+\small
+\caption{Explanation of Classes in the Class Diagram (Part 1)}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|p{3cm}|p{4cm}|p{7.5cm}|}
 \hline
@@ -573,6 +575,20 @@ The class diagram is a structural diagram that describes the system's object cla
 \hline
 \texttt{courses} & \texttt{id}, \texttt{title}, \texttt{description}, \texttt{credit\_hours}, \texttt{semester} & Academic courses with details such as credits and semester. \\
 \hline
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[H]
+\centering
+\small
+\caption{Explanation of Classes in the Class Diagram (Part 2)}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3cm}|p{4cm}|p{7.5cm}|}
+\hline
+\textbf{Class Name} & \textbf{Key Attributes} & \textbf{Description} \\
+\hline
 \texttt{group\_courses} & \texttt{id}, \texttt{course\_id}, \texttt{student\_group\_id}, \texttt{academic\_year} & Assigns courses to student groups. \\
 \hline
 \texttt{teacher\_course\_groups} & \texttt{id}, \texttt{teacher\_id}, \texttt{course\_id}, \texttt{student\_group\_id}, \texttt{academic\_year} & Links teachers to the student groups and courses they teach. \\
@@ -588,11 +604,10 @@ The class diagram is a structural diagram that describes the system's object cla
 \end{tabular}
 \end{table}
 
-
-
+\vspace{10cm}
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/morsli/class_diagram.png}
+    \includegraphics[width=0.8\textwidth]{images/morsli/Editor _ Mermaid Chart-2025-05-19-234958.png}
     \caption{Class Diagram}
     \label{fig:attendance-system}
 \end{figure}
@@ -636,6 +651,7 @@ The activity diagrams are shown right below.
 
 \vspace{20cm}
 
+\clearpage
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{images/morsli/Activity2.png}
@@ -646,18 +662,17 @@ The activity diagrams are shown right below.
 
 
 
-\newpage
+\clearpage
 \subsection{Sequence Diagram}
 
 A sequence diagram is a type of interaction diagram that shows how processes operate with one another and in what order. It visually represents the sequence of messages exchanged between different entities (objects or components) in a specific time sequence, focusing on the flow of logic within a system~\cite{booch2005uml}
 .
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/morsli/sequence.png}
-    \caption{Sequence Diagram}
-    \label{fig:attendance-system}
-\end{figure}
+
+
+
+
+
 
 \textbf{Example of Attendance System Workflow:}
 
@@ -679,15 +694,21 @@ The sequence diagram illustrates the lifecycle of a live session in the attendan
     \item \textbf{Session Cleanup:}  
     The client disconnects and unsubscribes from the channels. The session state is reset to \texttt{ACTIVE}.
 \end{enumerate}
-
-
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/morsli/sequence.png}
+    \caption{Sequence Diagram}
+    \label{fig:attendance-system}
+\end{figure}
+\clearpage
 \section{Conclusion}
 
 In conclusion, understanding software conception and its associated models is fundamental to developing reliable, maintainable, and scalable systems. The transition from abstract requirements to concrete implementation begins with a well-thought-out design phase, guided by principles such as modularity, cohesion, and low coupling. Among various modeling paradigms, object-oriented design stands out for its alignment with real-world abstractions and its ability to efficiently structure complex systems.
 
+The Unified Modeling Language (UML) thus played a central role in ensuring clarity, consistency, and effective communication throughout the development process. By leveraging these models, this project laid a solid foundation for the implementation of a robust and user-friendly attendance system based on QR code technology.
+
 In this project, several UML diagrams were employed to design and visualize the QR Code-based attendance tracking system. The \textit{use case diagram} clarified the core functionalities from the users’ perspectives. The \textit{class diagram} outlined the system's structural components and their relationships. The \textit{sequence diagram} captured the dynamic interactions during a live attendance session, and the \textit{activity diagram} modeled the workflow for access control and session participation. Together, these diagrams offered a comprehensive understanding of both the static and dynamic aspects of the system.
 
-The Unified Modeling Language (UML) thus played a central role in ensuring clarity, consistency, and effective communication throughout the development process. By leveraging these models, this project laid a solid foundation for the implementation of a robust and user-friendly attendance system based on QR code technology.
 
 
 \newpage
@@ -712,13 +733,32 @@ The Unified Modeling Language (UML) thus played a central role in ensuring clari
     {\color{mintgreen} \rule{\textwidth}{2pt} }
 \end{center}
 
-\input{text/practical_part}
+\newpage
+
+\newpage
+\begin{tcolorbox}[
+    colback=mintgreen!20, 
+    colframe=mintgreen!80!black, 
+    width=\textwidth, 
+    boxrule=1pt, 
+    arc=5pt, 
+    auto outer arc,
+    left=10pt,
+    right=10pt,
+    top=6pt,
+    bottom=6pt
+]
+    \centering
+    \Large \textbf{Practical Part}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\input{text/rachid/practical_part}
 
 
 
 
-
-
+\newpage
 
 \newpage
 \thispagestyle{empty}
@@ -764,9 +804,9 @@ The Unified Modeling Language (UML) thus played a central role in ensuring clari
 
 %\chapter*{} % Keep if you want it unnumbered; remove if already numbered elsewhere
 
-This project was part of the digital transformation of the educational system through the design and development of a mobile application that enables student attendance tracking using QR code technology. The application addresses many of the shortcomings of traditional attendance methods, which are often inefficient, time-consuming, and prone to human error or fraud.
+This project was part of a broader effort to modernize the education system by creating a mobile app that lets students check in using QR codes. It was designed to fix the common issues with old-school attendance methods, which are often slow, easy to mess up, and open to cheating.
 
-The developed application provides a reliable, fast, and secure solution for recording attendance by automating the process via QR code scanning and storing the data in a centralized, real-time database accessible by both teachers and administrators. This approach not only saves time but also promotes transparency and student accountability.
+The app makes attendance tracking quick, reliable, and secure by automating the process through QR code scanning. All data gets saved in a real-time database that teachers and administrators can access anytime. This setup not only saves time but also helps keep things transparent and keeps students accountable.
 
 Among the key achievements of the project:
 \begin{itemize}
@@ -775,18 +815,18 @@ Among the key achievements of the project:
   \item Integration of analytical tools to monitor attendance and absence patterns.
 \end{itemize}
 
-The potential applications of this solution extend beyond universities. It can be adapted to other educational or professional settings requiring rigorous attendance management.
+The app isn't just for universities—it's flexible enough to be used in other schools or even workplaces that need to keep close tabs on attendance.
 
-However, the system has some limitations. It assumes that students have functioning smartphones and a stable internet connection when scanning the QR code. Moreover, relying solely on code scanning for authentication could be bypassed without additional verification mechanisms such as geolocation or biometric checks.
+That said, there are some limitations. The system assumes every student has a working smartphone and a steady internet connection when checking in. And since it relies only on QR codes for verification, there's a chance it could be misused without extra security like GPS or fingerprint checks.
 
-For future improvements, several directions can be considered:
+Looking ahead, here are a few ideas to make the system even better:
 \begin{itemize}
   \item Integration with Learning Management Systems (LMS) for a comprehensive student tracking ecosystem.
-  \item Addition of geolocation to verify the student's physical presence in the classroom.
+  \item Add location tracking to make sure students are actually in class when they check in.
   \item Development of an advanced administrative dashboard for detailed attendance analytics.
 \end{itemize}
 
-In conclusion, this project marks a significant step toward intelligent and automated attendance management in educational institutions. It demonstrates our concrete contribution to enhancing academic processes by combining mobile technology, structured software modeling, and innovative educational practices.
+All in all, this project is a big step toward smarter, more automated attendance tracking in schools. It shows how mobile tech and smart software design can help make education more efficient and reliable.
 
 
 
@@ -799,7 +839,7 @@ In conclusion, this project marks a significant step toward intelligent and auto
 % \input{text/rachid/06-practical}
 
 
-
+\addcontentsline{toc}{chapter}{References}
 \begin{thebibliography}{9}
 \bibitem{rayane2022}
 Mehdi Rayane, Ladjeroud Khaoula, \textit{Une Application De Suivi De Présence Des étudiants Pour Les Enseignants}, Mémoire De Fin d'Etude, Université Mohammed Seddik Ben Yahia, Jijel, Algérie, 2022.
@@ -851,6 +891,12 @@ Jim Arlow, Ila Neustadt, \textit{UML 2 and the Unified Process}, 2nd Edition, Ad
 
 \bibitem{booch2005uml}
 Grady Booch, James Rumbaugh, Ivar Jacobson, \textit{The Unified Modeling Language User Guide}, Addison-Wesley, 2005.
+
+\bibitem{flutterDocs}
+Flutter Documentation. \textit{Flutter Official Docs}, Google, 2024. Available at: \url{https://docs.flutter.dev}
+
+\bibitem{supabaseDocs}
+Supabase Documentation. \textit{The Open Source Firebase Alternative}, Supabase, 2024. Available at: \url{https://supabase.com/docs}
 
 \end{thebibliography}
 

@@ -11,7 +11,7 @@ In this chapter, we present the technical implementation of the student attendan
 The project is built using a modern and robust technology stack that ensures scalability, real-time capabilities, and a smooth user experience:
 
 \subsubsection{Flutter Framework}
-Flutter is an open-source UI software development toolkit created by Google. It serves as the primary framework for building the cross-platform application in this project. Flutter enables developers to write a single codebase that can be compiled to run on Android, iOS, web, desktop, and embedded platforms, making it highly versatile and efficient for mobile app development~\cite{flutterDocs} .
+Flutter is an open-source UI software development toolkit created by Google. It serves as the primary framework for building the cross-platform application in this project. Flutter enables developers to write a single codebase that can be compiled to run on Android, iOS, web, desktop, and embedded platforms, making it highly versatile and efficient for mobile app development~\cite{FlutterDocs2024}.
 It's main advantages are :
 \begin{itemize}
     \item Cross-platform development capability for Android, iOS, and web platforms
@@ -23,7 +23,7 @@ It's main advantages are :
 
 \subsubsection{Supabase Backend}
 
-Supabase (version 2.6.3) is utilized as the backend solution for this application. It is an open-source Backend-as-a-Service (BaaS) platform that provides developers with scalable, real-time backend functionality built on top of PostgreSQL. Supabase offers a robust alternative to proprietary cloud services, enabling fast development of secure and efficient applications \cite{supabaseDocs}.
+Supabase (version 2.6.3) is utilized as the backend solution for this application. It is an open-source Backend-as-a-Service (BaaS) platform that provides developers with scalable, real-time backend functionality built on top of PostgreSQL. Supabase offers a robust alternative to proprietary cloud services, enabling fast development of secure and efficient applications \cite{SupabaseDocs2024}.
 
 The main features leveraged in this project include:
 \begin{itemize}
@@ -121,41 +121,8 @@ The application features a responsive interface that adapts seamlessly between m
     \caption{Teacher's Home Dashboard Interface}
     \label{fig:home-interface}
 \end{figure}
+ 
 
-\needspace{4\baselineskip}
-\subsection{Profile Management}\nopagebreak[4]
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.35\textwidth}
-        \includegraphics[width=\textwidth]{images/rachid/teacher-side-profile.png}
-        \caption{Mobile view with compact profile information and quick actions}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.35\textwidth}
-        \includegraphics[width=\textwidth]{images/rachid/teacher-side-profile-disktop.png}
-        \caption{Desktop view showing expanded profile details and statistics}
-    \end{subfigure}
-    \caption{Teacher Profile Management Interface}
-    \label{fig:profile-interface}
-\end{figure}
-
-\needspace{4\baselineskip}
-\subsection{Settings Interface}\nopagebreak[4]
-\vspace{0.5cm}
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.35\textwidth}
-        \includegraphics[width=\textwidth]{images/rachid/teacher-side-settings.png}
-        \caption{Mobile settings view with scrollable preferences}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.35\textwidth}
-        \includegraphics[width=\textwidth]{images/rachid/teacher-side-settings-desktop.png}
-        \caption{Desktop settings panel with categorized options}
-    \end{subfigure}
-    \caption{Application Settings Interface}
-    \label{fig:settings-interface}
-\end{figure}
 
 \needspace{4\baselineskip}
 \subsection{Student Management}\nopagebreak[4]
@@ -256,3 +223,30 @@ The application features a responsive interface that adapts seamlessly between m
     \caption{Student Timeline Interface showing chronological view of attendance events and upcoming sessions}
     \label{fig:student-timeline}
 \end{figure}
+
+\section{Conclusion}
+The practical implementation of our QR code-based student attendance tracking system demonstrates the successful integration of modern technologies to create a comprehensive and user-centric solution. Through the strategic use of Flutter for cross-platform development and Supabase for backend services, we have achieved a robust and scalable application that effectively addresses the challenges of attendance management in academic settings.
+
+The technical achievements of this implementation are significant:
+\begin{itemize}
+    \item Successfully leveraged Flutter's cross-platform capabilities to deliver a consistent experience across mobile and desktop platforms
+    \item Implemented seamless integration with Supabase backend services for real-time data synchronization and secure authentication
+    \item Developed efficient QR code generation and scanning functionality for streamlined attendance tracking
+\end{itemize}
+
+The system features two distinct but interconnected interfaces:
+\begin{itemize}
+    \item Teacher Interface: Provides comprehensive tools for session management, attendance tracking, and student performance monitoring
+    \item Student Interface: Offers intuitive access to course information, attendance records, and QR code scanning functionality
+\end{itemize}
+
+The implemented system demonstrates several key capabilities:
+\begin{itemize}
+    \item Real-time attendance tracking with immediate status updates
+    \item Secure authentication and role-based access control
+    \item Responsive design that adapts seamlessly across different devices
+    \item Comprehensive attendance history and analytics
+    \item Intuitive navigation and user-friendly interface design
+\end{itemize}
+
+The extensive interface screenshots presented throughout this chapter illustrate the system's commitment to user experience and functionality. From the teacher's dashboard to the student's course management interface, each component has been carefully designed to provide an efficient and engaging user experience while maintaining the integrity of the attendance tracking process.
